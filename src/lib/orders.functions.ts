@@ -43,9 +43,22 @@ export const placeOrder = createServerFn({ method: "POST" })
 
     let subtotal = 0;
     type CartItemRow = {
-      id: string; quantity: number; product_id: string; variant_id: string | null;
-      products: { name: string; price: number; discount_price: number | null; product_images: { url: string; sort_order: number }[] } | null;
-      product_variants: { size: string | null; color: string | null; price_override: number | null; stock: number } | null;
+      id: string;
+      quantity: number;
+      product_id: string;
+      variant_id: string | null;
+      products: {
+        name: string;
+        price: number;
+        discount_price: number | null;
+        product_images: { url: string; sort_order: number }[];
+      } | null;
+      product_variants: {
+        size: string | null;
+        color: string | null;
+        price_override: number | null;
+        stock: number;
+      } | null;
     };
     const orderItems = (items as CartItemRow[]).map((it) => {
       const unit = Number(
@@ -59,9 +72,8 @@ export const placeOrder = createServerFn({ method: "POST" })
       const variantLabel =
         [it.product_variants?.size, it.product_variants?.color].filter(Boolean).join(" / ") || null;
       const image =
-        (it.products?.product_images ?? [])
-          .slice()
-          .sort((a, b) => a.sort_order - b.sort_order)[0]?.url ?? null;
+        (it.products?.product_images ?? []).slice().sort((a, b) => a.sort_order - b.sort_order)[0]
+          ?.url ?? null;
       return {
         product_id: it.product_id,
         variant_id: it.variant_id,

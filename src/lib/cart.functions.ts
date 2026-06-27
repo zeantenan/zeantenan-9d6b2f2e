@@ -59,7 +59,8 @@ export const addToCart = createServerFn({ method: "POST" })
       .eq("cart_id", cartId)
       .eq("product_id", data.productId);
     const dup = (dupRows ?? []).find(
-      (r: { variant_id: string | null }) => (r.variant_id ?? null) === variantId || (!r.variant_id && !variantId),
+      (r: { variant_id: string | null }) =>
+        (r.variant_id ?? null) === variantId || (!r.variant_id && !variantId),
     );
 
     if (dup) {

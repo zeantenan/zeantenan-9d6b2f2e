@@ -135,7 +135,7 @@ function AuthPage() {
   async function onGoogle() {
     setLoading(true);
 
-    if (!(window as any).google?.accounts?.oauth2) {
+    if (!window.google?.accounts?.oauth2) {
       setLoading(false);
       return toast.error("Google Sign-In tidak tersedia", {
         description: "Muat ulang halaman atau coba metode lain.",
@@ -143,11 +143,11 @@ function AuthPage() {
     }
 
     try {
-      const g = (window as any).google.accounts.oauth2;
+      const g = window.google.accounts.oauth2;
       const client = g.initTokenClient({
         client_id: GOOGLE_CLIENT_ID,
         scope: "openid email profile",
-        callback: async (res: any) => {
+        callback: async (res) => {
           if (res.error) {
             setLoading(false);
             toast.error("Gagal masuk dengan Google", { description: res.error });
@@ -196,7 +196,7 @@ function AuthPage() {
           <div className="w-full max-w-md">
             <Tabs
               value={mode === "forgot" ? "login" : mode}
-              onValueChange={(v) => setMode(v as any)}
+              onValueChange={(v) => setMode(v as "login" | "register" | "forgot")}
             >
               <TabsList className="grid w-full grid-cols-2 rounded-none">
                 <TabsTrigger value="login" className="rounded-none">
