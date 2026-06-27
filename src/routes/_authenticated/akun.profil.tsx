@@ -89,7 +89,7 @@ function ProfilPage() {
           disabled={dm.isPending}
           onClick={() => {
             if (confirm("Yakin ingin menghapus akun? Tindakan ini tidak bisa dibatalkan."))
-              dm.mutate({} as any);
+              dm.mutate({});
           }}
         >
           Hapus Akun Permanen

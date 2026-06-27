@@ -26,11 +26,11 @@ export const Route = createFileRoute("/_authenticated/akun/")({
 function AkunPage() {
   const { data: profile } = useSuspenseQuery(pQO);
   const { data: orders } = useSuspenseQuery(oQO);
-  const recent = orders.slice(0, 4);
+  const recent = (orders as OrderListItem[]).slice(0, 4);
 
   return (
     <AccountLayout
-      title={`Halo, ${profile?.full_name || "Pelanggan"}`}
+      title={`Halo, ${(profile as Profile)?.full_name || "Pelanggan"}`}
       description="Pantau aktivitas akun dan pesanan Anda."
     >
       <div className="grid gap-4 sm:grid-cols-3">
@@ -38,9 +38,14 @@ function AkunPage() {
         <Stat
           label="Sedang Diproses"
           value={String(
-            orders.filter((o: any) => !["selesai", "dibatalkan", "ditolak"].includes(o.status))
-              .length,
+            (orders as OrderListItem[]).filter(
+              (o) => !["selesai", "dibatalkan", "ditolak"].includes(o.status),
+            ).length,
           )}
+        />
+        <Stat
+          label="Selesai"
+          value={String((orders as OrderListItem[]).filter((o) => o.status === "selesai").length)}
         />
         <Stat
           label="Selesai"
@@ -59,7 +64,7 @@ function AkunPage() {
           <p className="mt-6 text-sm text-muted-foreground">Belum ada pesanan.</p>
         ) : (
           <ul className="divide-y divide-border">
-            {recent.map((o: any) => (
+            {recent.map((o) => (
               <li key={o.id}>
                 <Link
                   to="/pesanan/$orderNumber"

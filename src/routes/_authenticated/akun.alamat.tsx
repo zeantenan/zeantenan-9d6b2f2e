@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { listAddresses, upsertAddress, deleteAddress } from "@/lib/account.functions";
+import type { Address } from "@/lib/types";
 
 const qo = queryOptions({ queryKey: ["addresses"], queryFn: () => listAddresses() });
 
@@ -52,10 +53,10 @@ function AlamatPage() {
   const [editing, setEditing] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  const editAddr = data.find((a: any) => a.id === editing);
+  const editAddr = (data as Address[]).find((a) => a.id === editing);
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: {} as any,
+    defaultValues: {},
   });
 
   function openCreate() {
