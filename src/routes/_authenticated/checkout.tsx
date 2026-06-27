@@ -111,7 +111,7 @@ function CheckoutPage() {
   const total = subtotal + shipping;
 
   function pickAddress(id: string) {
-    const a = addresses.find((x: any) => x.id === id);
+    const a = (addresses as Address[]).find((x) => x.id === id);
     if (!a) return;
     setUsingAddrId(id);
     form.reset({
@@ -129,13 +129,13 @@ function CheckoutPage() {
 
   const m = useMutation({
     mutationFn: place,
-    onSuccess: (res: any) => {
+    onSuccess: (res: { order_number: string }) => {
       toast.success("Pesanan berhasil dibuat", {
         description: `Nomor pesanan: ${res.order_number}`,
       });
       navigate({ to: "/pesanan/$orderNumber", params: { orderNumber: res.order_number } });
     },
-    onError: (e: any) => toast.error("Gagal membuat pesanan", { description: e.message }),
+    onError: (e: Error) => toast.error("Gagal membuat pesanan", { description: e.message }),
   });
 
   function onSubmit(values: z.infer<typeof schema>) {
@@ -178,7 +178,7 @@ function CheckoutPage() {
             <section>
               <h3 className="font-display text-lg">Pilih dari Alamat Tersimpan</h3>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {addresses.map((a: any) => (
+                {(addresses as Address[]).map((a) => (
                   <button
                     key={a.id}
                     type="button"
@@ -302,7 +302,7 @@ function CheckoutPage() {
         <aside className="h-fit border border-border p-6">
           <h3 className="font-display text-xl text-foreground">Ringkasan</h3>
           <ul className="mt-4 space-y-3 text-sm">
-            {items.map((it: any) => {
+            {items.map((it) => {
               const price = Number(
                 it.product_variants?.price_override ??
                   it.products?.discount_price ??

@@ -4,6 +4,7 @@ import { AccountLayout } from "@/components/layout/AccountLayout";
 import { getProfile } from "@/lib/account.functions";
 import { listOrders } from "@/lib/orders.functions";
 import { formatIDR, formatDateID, ORDER_STATUS_LABEL } from "@/lib/format";
+import type { OrderListItem, Profile } from "@/lib/types";
 
 const pQO = queryOptions({ queryKey: ["profile"], queryFn: () => getProfile() });
 const oQO = queryOptions({ queryKey: ["orders"], queryFn: () => listOrders() });

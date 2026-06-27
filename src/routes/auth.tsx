@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { supabase } from "@/integrations/supabase/client";
 
+const GOOGLE_CLIENT_ID = "1016487992569-j3q50d8fklerq75tan9s11btdtbna69o.apps.googleusercontent.com";
+
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -54,6 +56,15 @@ function AuthPage() {
       if (data.session) navigate({ to: "/akun" });
     });
   }, [navigate]);
+
+  useEffect(() => {
+    if ((window as any).google?.accounts) return;
+    const s = document.createElement("script");
+    s.src = "https://accounts.google.com/gsi/client";
+    s.async = true;
+    s.defer = true;
+    document.body.appendChild(s);
+  }, []);
 
   const loginForm = useForm({
     resolver: zodResolver(loginSchema),
@@ -106,12 +117,40 @@ function AuthPage() {
 
   async function onGoogle() {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin + "/auth" },
-    });
-    setLoading(false);
-    if (error) return toast.error("Gagal masuk dengan Google", { description: error.message });
+
+    if (!(window as any).google?.accounts?.oauth2) {
+      setLoading(false);
+      return toast.error("Google Sign-In tidak tersedia", { description: "Muat ulang halaman atau coba metode lain." });
+    }
+
+    try {
+      const g = (window as any).google.accounts.oauth2;
+      const client = g.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: "openid email profile",
+        callback: async (res: any) => {
+          if (res.error) {
+            setLoading(false);
+            toast.error("Gagal masuk dengan Google", { description: res.error });
+            return;
+          }
+          const token = res.id_token;
+          if (!token) {
+            setLoading(false);
+            toast.error("Tidak mendapatkan token dari Google");
+            return;
+          }
+          const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token });
+          setLoading(false);
+          if (error) return toast.error("Gagal verifikasi akun", { description: error.message });
+          navigate({ to: "/akun" });
+        },
+      });
+      client.requestAccessToken();
+    } catch (err) {
+      setLoading(false);
+      toast.error("Gagal masuk dengan Google", { description: String(err) });
+    }
   }
 
   return (
