@@ -13,7 +13,7 @@ const qo = (sort: string, q: string) =>
     queryFn: () => listProducts({ data: { sort: sort as any, q: q || undefined, limit: 48 } }),
   });
 
-export const Route = createFileRoute("/produk")({
+export const Route = createFileRoute("/produk/")({
   head: () => ({
     meta: [
       { title: "Katalog Produk — ZEAN TENAN" },
