@@ -80,11 +80,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "ZEAN TENAN — Original Gamis & Daster dari Kota Batik Indonesia" },
       { name: "description", content: "Belanja gamis dan daster original dari Pekalongan. Kualitas premium, motif batik khas, langsung dari pengrajin Kota Batik Indonesia." },
       { name: "author", content: "ZEAN TENAN" },
-      { property: "og:title", content: "ZEAN TENAN — Original Gamis & Daster" },
-      { property: "og:description", content: "Original Gamis & Daster dari Kota Batik Indonesia." },
+      { property: "og:title", content: "ZEAN TENAN — Original Gamis & Daster dari Kota Batik Indonesia" },
+      { property: "og:description", content: "Belanja gamis dan daster original dari Pekalongan. Kualitas premium, motif batik khas, langsung dari pengrajin Kota Batik Indonesia." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "theme-color", content: "#7B1E3A" },
+      { name: "twitter:title", content: "ZEAN TENAN — Original Gamis & Daster dari Kota Batik Indonesia" },
+      { name: "twitter:description", content: "Belanja gamis dan daster original dari Pekalongan. Kualitas premium, motif batik khas, langsung dari pengrajin Kota Batik Indonesia." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c053cb3d-4b99-451e-a50b-c2045312098a/id-preview-159c2cf5--33812ec1-4018-4859-be17-66244028a611.lovable.app-1782564825789.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c053cb3d-4b99-451e-a50b-c2045312098a/id-preview-159c2cf5--33812ec1-4018-4859-be17-66244028a611.lovable.app-1782564825789.png" },
     ],
     links: [
       {
