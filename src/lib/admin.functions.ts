@@ -25,16 +25,30 @@ const createProductSchema = z.object({
   status: z.enum(["draft", "published", "archived"]).default("draft"),
   seo_title: z.string().max(200).optional().nullable(),
   seo_description: z.string().max(500).optional().nullable(),
-  images: z.array(z.object({ url: z.string(), alt: z.string().optional().nullable(), sort_order: z.number().int().default(0) })).optional().default([]),
-  variants: z.array(z.object({
-    sku: z.string().optional().nullable(),
-    size: z.string().optional().nullable(),
-    color: z.string().optional().nullable(),
-    stock: z.number().int().min(0).default(0),
-    min_stock: z.number().int().min(0).default(3),
-    price_override: z.number().min(0).optional().nullable(),
-    is_active: z.boolean().default(true),
-  })).optional().default([]),
+  images: z
+    .array(
+      z.object({
+        url: z.string(),
+        alt: z.string().optional().nullable(),
+        sort_order: z.number().int().default(0),
+      }),
+    )
+    .optional()
+    .default([]),
+  variants: z
+    .array(
+      z.object({
+        sku: z.string().optional().nullable(),
+        size: z.string().optional().nullable(),
+        color: z.string().optional().nullable(),
+        stock: z.number().int().min(0).default(0),
+        min_stock: z.number().int().min(0).default(3),
+        price_override: z.number().min(0).optional().nullable(),
+        is_active: z.boolean().default(true),
+      }),
+    )
+    .optional()
+    .default([]),
 });
 
 export const adminListProducts = createServerFn({ method: "GET" })
@@ -45,7 +59,11 @@ export const adminListProducts = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const sb = await getAdmin();
-    let q = sb.from("products").select("id, name, slug, price, discount_price, status, created_at, updated_at, categories(name)")
+    let q = sb
+      .from("products")
+      .select(
+        "id, name, slug, price, discount_price, status, created_at, updated_at, categories(name)",
+      )
       .order("created_at", { ascending: false });
     if (data.status) q = q.eq("status", data.status);
     if (data.q) q = q.ilike("name", `%${data.q}%`);
@@ -60,8 +78,11 @@ export const adminGetProduct = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const sb = await getAdmin();
-    const { data: product, error } = await sb.from("products").select("*, product_images(*), product_variants(*), categories(id, name, slug)")
-      .eq("id", data.id).maybeSingle();
+    const { data: product, error } = await sb
+      .from("products")
+      .select("*, product_images(*), product_variants(*), categories(id, name, slug)")
+      .eq("id", data.id)
+      .maybeSingle();
     if (error) throw new Error(error.message);
     return product;
   });
@@ -74,26 +95,30 @@ export const adminCreateProduct = createServerFn({ method: "POST" })
     const sb = await getAdmin();
 
     const { images, variants, ...product } = data;
-    const { data: newProd, error } = await sb.from("products").insert({
-      ...product,
-      category_id: product.category_id || null,
-      discount_price: product.discount_price || null,
-    }).select("id").single();
+    const { data: newProd, error } = await sb
+      .from("products")
+      .insert({
+        ...product,
+        category_id: product.category_id || null,
+        discount_price: product.discount_price || null,
+      })
+      .select("id")
+      .single();
 
     if (error) throw new Error(error.message);
     const productId = newProd.id;
 
     if (images.length) {
-      const { error: imgErr } = await sb.from("product_images").insert(
-        images.map((img) => ({ ...img, product_id: productId })),
-      );
+      const { error: imgErr } = await sb
+        .from("product_images")
+        .insert(images.map((img) => ({ ...img, product_id: productId })));
       if (imgErr) throw new Error(imgErr.message);
     }
 
     if (variants.length) {
-      const { error: varErr } = await sb.from("product_variants").insert(
-        variants.map((v) => ({ ...v, product_id: productId })),
-      );
+      const { error: varErr } = await sb
+        .from("product_variants")
+        .insert(variants.map((v) => ({ ...v, product_id: productId })));
       if (varErr) throw new Error(varErr.message);
     }
 
@@ -108,20 +133,23 @@ export const adminUpdateProduct = createServerFn({ method: "POST" })
     const sb = await getAdmin();
 
     const { id, images, variants, ...product } = data;
-    const { error } = await sb.from("products").update({
-      ...product,
-      category_id: product.category_id || null,
-      discount_price: product.discount_price || null,
-    }).eq("id", id);
+    const { error } = await sb
+      .from("products")
+      .update({
+        ...product,
+        category_id: product.category_id || null,
+        discount_price: product.discount_price || null,
+      })
+      .eq("id", id);
 
     if (error) throw new Error(error.message);
 
     if (images) {
       await sb.from("product_images").delete().eq("product_id", id);
       if (images.length) {
-        const { error: imgErr } = await sb.from("product_images").insert(
-          images.map((img) => ({ ...img, product_id: id })),
-        );
+        const { error: imgErr } = await sb
+          .from("product_images")
+          .insert(images.map((img) => ({ ...img, product_id: id })));
         if (imgErr) throw new Error(imgErr.message);
       }
     }
@@ -129,9 +157,9 @@ export const adminUpdateProduct = createServerFn({ method: "POST" })
     if (variants) {
       await sb.from("product_variants").delete().eq("product_id", id);
       if (variants.length) {
-        const { error: varErr } = await sb.from("product_variants").insert(
-          variants.map((v) => ({ ...v, product_id: id })),
-        );
+        const { error: varErr } = await sb
+          .from("product_variants")
+          .insert(variants.map((v) => ({ ...v, product_id: id })));
         if (varErr) throw new Error(varErr.message);
       }
     }
@@ -162,14 +190,18 @@ export const adminListCategories = createServerFn({ method: "GET" })
 
 export const adminCreateCategory = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({
-    name: z.string().trim().min(1).max(100),
-    slug: z.string().trim().min(1).max(100),
-    description: z.string().max(500).optional().nullable(),
-    image_url: z.string().optional().nullable(),
-    sort_order: z.number().int().default(0),
-    is_active: z.boolean().default(true),
-  }).parse(d))
+  .inputValidator((d) =>
+    z
+      .object({
+        name: z.string().trim().min(1).max(100),
+        slug: z.string().trim().min(1).max(100),
+        description: z.string().max(500).optional().nullable(),
+        image_url: z.string().optional().nullable(),
+        sort_order: z.number().int().default(0),
+        is_active: z.boolean().default(true),
+      })
+      .parse(d),
+  )
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const sb = await getAdmin();

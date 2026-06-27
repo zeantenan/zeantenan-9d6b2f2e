@@ -28,6 +28,9 @@ import { Route as AuthenticatedPesananOrderNumberRouteImport } from './routes/_a
 import { Route as AuthenticatedAkunProfilRouteImport } from './routes/_authenticated/akun.profil'
 import { Route as AuthenticatedAkunPasswordRouteImport } from './routes/_authenticated/akun.password'
 import { Route as AuthenticatedAkunAlamatRouteImport } from './routes/_authenticated/akun.alamat'
+import { Route as AuthenticatedAdminProdukIndexRouteImport } from './routes/_authenticated/admin/produk/index'
+import { Route as AuthenticatedAdminProdukTambahRouteImport } from './routes/_authenticated/admin/produk/tambah'
+import { Route as AuthenticatedAdminProdukSlugEditRouteImport } from './routes/_authenticated/admin/produk/$slug/edit'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -126,6 +129,24 @@ const AuthenticatedAkunAlamatRoute = AuthenticatedAkunAlamatRouteImport.update({
   path: '/akun/alamat',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminProdukIndexRoute =
+  AuthenticatedAdminProdukIndexRouteImport.update({
+    id: '/produk/',
+    path: '/produk/',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminProdukTambahRoute =
+  AuthenticatedAdminProdukTambahRouteImport.update({
+    id: '/produk/tambah',
+    path: '/produk/tambah',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminProdukSlugEditRoute =
+  AuthenticatedAdminProdukSlugEditRouteImport.update({
+    id: '/produk/$slug/edit',
+    path: '/produk/$slug/edit',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -146,6 +167,9 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/akun/': typeof AuthenticatedAkunIndexRoute
   '/pesanan/': typeof AuthenticatedPesananIndexRoute
+  '/admin/produk/tambah': typeof AuthenticatedAdminProdukTambahRoute
+  '/admin/produk/': typeof AuthenticatedAdminProdukIndexRoute
+  '/admin/produk/$slug/edit': typeof AuthenticatedAdminProdukSlugEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -165,6 +189,9 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/akun': typeof AuthenticatedAkunIndexRoute
   '/pesanan': typeof AuthenticatedPesananIndexRoute
+  '/admin/produk/tambah': typeof AuthenticatedAdminProdukTambahRoute
+  '/admin/produk': typeof AuthenticatedAdminProdukIndexRoute
+  '/admin/produk/$slug/edit': typeof AuthenticatedAdminProdukSlugEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -187,6 +214,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/akun/': typeof AuthenticatedAkunIndexRoute
   '/_authenticated/pesanan/': typeof AuthenticatedPesananIndexRoute
+  '/_authenticated/admin/produk/tambah': typeof AuthenticatedAdminProdukTambahRoute
+  '/_authenticated/admin/produk/': typeof AuthenticatedAdminProdukIndexRoute
+  '/_authenticated/admin/produk/$slug/edit': typeof AuthenticatedAdminProdukSlugEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -209,6 +239,9 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/akun/'
     | '/pesanan/'
+    | '/admin/produk/tambah'
+    | '/admin/produk/'
+    | '/admin/produk/$slug/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,6 +261,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/akun'
     | '/pesanan'
+    | '/admin/produk/tambah'
+    | '/admin/produk'
+    | '/admin/produk/$slug/edit'
   id:
     | '__root__'
     | '/'
@@ -249,6 +285,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/akun/'
     | '/_authenticated/pesanan/'
+    | '/_authenticated/admin/produk/tambah'
+    | '/_authenticated/admin/produk/'
+    | '/_authenticated/admin/produk/$slug/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -397,16 +436,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAkunAlamatRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/produk/': {
+      id: '/_authenticated/admin/produk/'
+      path: '/produk'
+      fullPath: '/admin/produk/'
+      preLoaderRoute: typeof AuthenticatedAdminProdukIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/produk/tambah': {
+      id: '/_authenticated/admin/produk/tambah'
+      path: '/produk/tambah'
+      fullPath: '/admin/produk/tambah'
+      preLoaderRoute: typeof AuthenticatedAdminProdukTambahRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/produk/$slug/edit': {
+      id: '/_authenticated/admin/produk/$slug/edit'
+      path: '/produk/$slug/edit'
+      fullPath: '/admin/produk/$slug/edit'
+      preLoaderRoute: typeof AuthenticatedAdminProdukSlugEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminProdukTambahRoute: typeof AuthenticatedAdminProdukTambahRoute
+  AuthenticatedAdminProdukIndexRoute: typeof AuthenticatedAdminProdukIndexRoute
+  AuthenticatedAdminProdukSlugEditRoute: typeof AuthenticatedAdminProdukSlugEditRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+    AuthenticatedAdminProdukTambahRoute: AuthenticatedAdminProdukTambahRoute,
+    AuthenticatedAdminProdukIndexRoute: AuthenticatedAdminProdukIndexRoute,
+    AuthenticatedAdminProdukSlugEditRoute:
+      AuthenticatedAdminProdukSlugEditRoute,
   }
 
 const AuthenticatedAdminRouteRouteWithChildren =

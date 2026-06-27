@@ -36,7 +36,9 @@ function AdminDashboard() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="font-display text-2xl text-foreground">Dashboard</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Kelola produk, kategori, dan konten toko Anda.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Kelola produk, kategori, dan konten toko Anda.
+          </p>
         </div>
         <Link
           to="/admin/produk/tambah"
@@ -55,7 +57,9 @@ function AdminDashboard() {
 
       <div className="grid gap-8 lg:grid-cols-2">
         <div>
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Produk Terbaru</h2>
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Produk Terbaru
+          </h2>
           <div className="space-y-2">
             {products.slice(0, 5).map((p) => (
               <Link
@@ -66,7 +70,9 @@ function AdminDashboard() {
               >
                 <div>
                   <span className="font-medium text-foreground">{p.name}</span>
-                  <span className={`ml-2 text-xs uppercase ${p.status === "published" ? "text-green-600" : p.status === "draft" ? "text-amber-600" : "text-muted-foreground"}`}>
+                  <span
+                    className={`ml-2 text-xs uppercase ${p.status === "published" ? "text-green-600" : p.status === "draft" ? "text-amber-600" : "text-muted-foreground"}`}
+                  >
                     {p.status}
                   </span>
                 </div>
@@ -74,16 +80,23 @@ function AdminDashboard() {
               </Link>
             ))}
             {products.length === 0 && (
-              <p className="py-8 text-center text-sm text-muted-foreground">Belum ada produk. Mulai tambah produk baru!</p>
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                Belum ada produk. Mulai tambah produk baru!
+              </p>
             )}
           </div>
         </div>
 
         <div>
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Kategori</h2>
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Kategori
+          </h2>
           <div className="space-y-2">
             {categories.map((c) => (
-              <div key={c.id} className="flex items-center justify-between border border-border px-4 py-3 text-sm">
+              <div
+                key={c.id}
+                className="flex items-center justify-between border border-border px-4 py-3 text-sm"
+              >
                 <span className="text-foreground">{c.name}</span>
                 <span className="text-xs text-muted-foreground">{c.slug}</span>
               </div>
@@ -98,7 +111,15 @@ function AdminDashboard() {
   );
 }
 
-function StatCard({ icon: Icon, label, value }: { icon: any; label: string; value: string | number }) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: any;
+  label: string;
+  value: string | number;
+}) {
   return (
     <div className="border border-border bg-card p-5">
       <div className="flex items-center gap-3">
