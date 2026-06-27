@@ -45,22 +45,12 @@ export const addToCart = createServerFn({ method: "POST" })
     const qty = data.quantity ?? 1;
     const variantId = data.variantId ?? null;
 
-    const { data: existing } = await supabase
-      .from("cart_items")
-      .select("id, quantity")
-      .eq("cart_id", cartId)
-      .eq("product_id", data.productId)
-      .is("variant_id", variantId === null ? null : undefined)
-      .eq("variant_id", variantId ?? "")
-      .maybeSingle();
-
-    // Above .is/.eq combo is finicky; do safer manual check
     const { data: dupRows } = await supabase
       .from("cart_items").select("id, quantity")
       .eq("cart_id", cartId).eq("product_id", data.productId);
     const dup = (dupRows ?? []).find((r: any) =>
       (r.variant_id ?? null) === variantId || (!r.variant_id && !variantId),
-    ) ?? existing;
+    );
 
     if (dup) {
       const { error } = await supabase
@@ -109,7 +99,7 @@ export const updateCartMeta = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const cartId = await ensureCart(supabase, userId);
-    const patch: Record<string, any> = {};
+    const patch: { voucher_code?: string | null; notes?: string | null } = {};
     if (data.voucherCode !== undefined) patch.voucher_code = data.voucherCode;
     if (data.notes !== undefined) patch.notes = data.notes;
     const { error } = await supabase.from("carts").update(patch).eq("id", cartId);
