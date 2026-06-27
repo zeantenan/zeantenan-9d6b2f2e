@@ -20,8 +20,10 @@ import { Route as KategoriSlugRouteImport } from './routes/kategori.$slug'
 import { Route as AuthenticatedWishlistRouteImport } from './routes/_authenticated/wishlist'
 import { Route as AuthenticatedKeranjangRouteImport } from './routes/_authenticated/keranjang'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedPesananIndexRouteImport } from './routes/_authenticated/pesanan.index'
 import { Route as AuthenticatedAkunIndexRouteImport } from './routes/_authenticated/akun.index'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedPesananOrderNumberRouteImport } from './routes/_authenticated/pesanan.$orderNumber'
 import { Route as AuthenticatedAkunProfilRouteImport } from './routes/_authenticated/akun.profil'
 import { Route as AuthenticatedAkunPasswordRouteImport } from './routes/_authenticated/akun.password'
@@ -81,6 +83,11 @@ const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPesananIndexRoute =
   AuthenticatedPesananIndexRouteImport.update({
     id: '/pesanan/',
@@ -91,6 +98,11 @@ const AuthenticatedAkunIndexRoute = AuthenticatedAkunIndexRouteImport.update({
   id: '/akun/',
   path: '/akun/',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
 const AuthenticatedPesananOrderNumberRoute =
   AuthenticatedPesananOrderNumberRouteImport.update({
@@ -120,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/cari': typeof CariRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/keranjang': typeof AuthenticatedKeranjangRoute
   '/wishlist': typeof AuthenticatedWishlistRoute
@@ -130,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/akun/password': typeof AuthenticatedAkunPasswordRoute
   '/akun/profil': typeof AuthenticatedAkunProfilRoute
   '/pesanan/$orderNumber': typeof AuthenticatedPesananOrderNumberRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/akun/': typeof AuthenticatedAkunIndexRoute
   '/pesanan/': typeof AuthenticatedPesananIndexRoute
 }
@@ -148,6 +162,7 @@ export interface FileRoutesByTo {
   '/akun/password': typeof AuthenticatedAkunPasswordRoute
   '/akun/profil': typeof AuthenticatedAkunProfilRoute
   '/pesanan/$orderNumber': typeof AuthenticatedPesananOrderNumberRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/akun': typeof AuthenticatedAkunIndexRoute
   '/pesanan': typeof AuthenticatedPesananIndexRoute
 }
@@ -158,6 +173,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/cari': typeof CariRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/keranjang': typeof AuthenticatedKeranjangRoute
   '/_authenticated/wishlist': typeof AuthenticatedWishlistRoute
@@ -168,6 +184,7 @@ export interface FileRoutesById {
   '/_authenticated/akun/password': typeof AuthenticatedAkunPasswordRoute
   '/_authenticated/akun/profil': typeof AuthenticatedAkunProfilRoute
   '/_authenticated/pesanan/$orderNumber': typeof AuthenticatedPesananOrderNumberRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/akun/': typeof AuthenticatedAkunIndexRoute
   '/_authenticated/pesanan/': typeof AuthenticatedPesananIndexRoute
 }
@@ -178,6 +195,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cari'
     | '/reset-password'
+    | '/admin'
     | '/checkout'
     | '/keranjang'
     | '/wishlist'
@@ -188,6 +206,7 @@ export interface FileRouteTypes {
     | '/akun/password'
     | '/akun/profil'
     | '/pesanan/$orderNumber'
+    | '/admin/'
     | '/akun/'
     | '/pesanan/'
   fileRoutesByTo: FileRoutesByTo
@@ -206,6 +225,7 @@ export interface FileRouteTypes {
     | '/akun/password'
     | '/akun/profil'
     | '/pesanan/$orderNumber'
+    | '/admin'
     | '/akun'
     | '/pesanan'
   id:
@@ -215,6 +235,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cari'
     | '/reset-password'
+    | '/_authenticated/admin'
     | '/_authenticated/checkout'
     | '/_authenticated/keranjang'
     | '/_authenticated/wishlist'
@@ -225,6 +246,7 @@ export interface FileRouteTypes {
     | '/_authenticated/akun/password'
     | '/_authenticated/akun/profil'
     | '/_authenticated/pesanan/$orderNumber'
+    | '/_authenticated/admin/'
     | '/_authenticated/akun/'
     | '/_authenticated/pesanan/'
   fileRoutesById: FileRoutesById
@@ -319,6 +341,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/pesanan/': {
       id: '/_authenticated/pesanan/'
       path: '/pesanan'
@@ -332,6 +361,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/akun/'
       preLoaderRoute: typeof AuthenticatedAkunIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/pesanan/$orderNumber': {
       id: '/_authenticated/pesanan/$orderNumber'
@@ -364,7 +400,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedKeranjangRoute: typeof AuthenticatedKeranjangRoute
   AuthenticatedWishlistRoute: typeof AuthenticatedWishlistRoute
@@ -377,6 +428,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedKeranjangRoute: AuthenticatedKeranjangRoute,
   AuthenticatedWishlistRoute: AuthenticatedWishlistRoute,
