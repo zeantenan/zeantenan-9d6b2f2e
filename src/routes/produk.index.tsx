@@ -3,7 +3,13 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useState } from "react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ProductCard } from "./index";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { listProducts } from "@/lib/products.functions";
 
@@ -17,9 +23,17 @@ export const Route = createFileRoute("/produk/")({
   head: () => ({
     meta: [
       { title: "Katalog Produk — ZEAN TENAN" },
-      { name: "description", content: "Jelajahi seluruh koleksi gamis dan daster original ZEAN TENAN dari Kota Batik Indonesia. Kualitas premium, motif batik khas Pekalongan." },
+      {
+        name: "description",
+        content:
+          "Jelajahi seluruh koleksi gamis dan daster original ZEAN TENAN dari Kota Batik Indonesia. Kualitas premium, motif batik khas Pekalongan.",
+      },
       { property: "og:title", content: "Katalog Produk — ZEAN TENAN" },
-      { property: "og:description", content: "Koleksi gamis & daster original dari Pekalongan. Langsung dari pengrajin Kota Batik Indonesia." },
+      {
+        property: "og:description",
+        content:
+          "Koleksi gamis & daster original dari Pekalongan. Langsung dari pengrajin Kota Batik Indonesia.",
+      },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(qo("newest", "")),
@@ -38,7 +52,8 @@ function CatalogPage() {
           <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Katalog</p>
           <h1 className="mt-3 font-display text-4xl text-foreground">Seluruh Koleksi</h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Pilih dari koleksi gamis dan daster yang dibuat dengan ketelitian khas pengrajin Pekalongan.
+            Pilih dari koleksi gamis dan daster yang dibuat dengan ketelitian khas pengrajin
+            Pekalongan.
           </p>
         </div>
 
@@ -67,7 +82,9 @@ function CatalogPage() {
           </div>
         ) : (
           <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
-            {products.map((p: any) => <ProductCard key={p.id} product={p} />)}
+            {products.map((p: any) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
           </div>
         )}
       </div>

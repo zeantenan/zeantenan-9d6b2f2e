@@ -4,35 +4,40 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
 function publicClient() {
-  return createClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_KEY!,
-    { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
-  );
+  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+  });
 }
 
 export const listProducts = createServerFn({ method: "GET" })
-  .inputValidator((d: { q?: string; category?: string; sort?: string; limit?: number } | undefined) =>
-    z
-      .object({
-        q: z.string().optional(),
-        category: z.string().optional(),
-        sort: z.enum(["newest", "price_asc", "price_desc"]).optional(),
-        limit: z.number().int().min(1).max(60).optional(),
-      })
-      .parse(d ?? {}),
+  .inputValidator(
+    (d: { q?: string; category?: string; sort?: string; limit?: number } | undefined) =>
+      z
+        .object({
+          q: z.string().optional(),
+          category: z.string().optional(),
+          sort: z.enum(["newest", "price_asc", "price_desc"]).optional(),
+          limit: z.number().int().min(1).max(60).optional(),
+        })
+        .parse(d ?? {}),
   )
   .handler(async ({ data }) => {
     const sb = publicClient();
     let q = sb
       .from("products")
-      .select("id, name, slug, price, discount_price, short_description, product_images(url, sort_order), categories(name, slug)")
+      .select(
+        "id, name, slug, price, discount_price, short_description, product_images(url, sort_order), categories(name, slug)",
+      )
       .eq("status", "published")
       .limit(data.limit ?? 24);
 
     if (data.q) q = q.ilike("name", `%${data.q}%`);
     if (data.category) {
-      const { data: cat } = await sb.from("categories").select("id").eq("slug", data.category).maybeSingle();
+      const { data: cat } = await sb
+        .from("categories")
+        .select("id")
+        .eq("slug", data.category)
+        .maybeSingle();
       if (cat) q = q.eq("category_id", cat.id);
     }
     if (data.sort === "price_asc") q = q.order("price", { ascending: true });

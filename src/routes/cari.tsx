@@ -10,7 +10,11 @@ export const Route = createFileRoute("/cari")({
   head: () => ({
     meta: [
       { title: "Cari Produk — ZEAN TENAN" },
-      { name: "description", content: "Temukan gamis dan daster favorit Anda dari koleksi original ZEAN TENAN, langsung dari Kota Batik Indonesia." },
+      {
+        name: "description",
+        content:
+          "Temukan gamis dan daster favorit Anda dari koleksi original ZEAN TENAN, langsung dari Kota Batik Indonesia.",
+      },
       { property: "og:title", content: "Cari Produk — ZEAN TENAN" },
       { property: "og:description", content: "Temukan gamis dan daster original dari Pekalongan." },
     ],
@@ -43,7 +47,9 @@ function SearchPage() {
         </div>
         {data && data.length > 0 && (
           <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
-            {data.map((p: any) => <ProductCard key={p.id} product={p} />)}
+            {data.map((p: any) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
           </div>
         )}
       </div>

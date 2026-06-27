@@ -15,7 +15,15 @@ const ITEMS = [
   { to: "/akun/password", label: "Ubah Password", icon: KeyRound },
 ];
 
-export function AccountLayout({ children, title, description }: { children: ReactNode; title: string; description?: string }) {
+export function AccountLayout({
+  children,
+  title,
+  description,
+}: {
+  children: ReactNode;
+  title: string;
+  description?: string;
+}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -33,7 +41,9 @@ export function AccountLayout({ children, title, description }: { children: Reac
         <div className="mb-8 border-b border-border pb-6">
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Akun Saya</p>
           <h1 className="mt-2 font-display text-3xl text-foreground">{title}</h1>
-          {description && <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{description}</p>}
+          {description && (
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{description}</p>
+          )}
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[220px_1fr]">

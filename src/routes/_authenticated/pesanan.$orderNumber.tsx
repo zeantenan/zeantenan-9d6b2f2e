@@ -11,20 +11,28 @@ import { getOrder, submitPaymentProof, cancelOrder } from "@/lib/orders.function
 import { formatIDR, formatDateID, ORDER_STATUS_LABEL, ORDER_STATUS_FLOW } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 
-const qo = (n: string) => queryOptions({ queryKey: ["order", n], queryFn: () => getOrder({ data: { orderNumber: n } }) });
+const qo = (n: string) =>
+  queryOptions({ queryKey: ["order", n], queryFn: () => getOrder({ data: { orderNumber: n } }) });
 
 export const Route = createFileRoute("/_authenticated/pesanan/$orderNumber")({
   loader: async ({ params, context }) => {
     const r = await context.queryClient.ensureQueryData(qo(params.orderNumber));
     if (!r) throw notFound();
   },
-  head: ({ params }) => ({ meta: [
-    { title: `Pesanan ${params.orderNumber} — ZEAN TENAN` },
-    { name: "description", content: `Detail pesanan ${params.orderNumber} — pantau status pengiriman gamis dan daster original ZEAN TENAN.` },
-  ] }),
+  head: ({ params }) => ({
+    meta: [
+      { title: `Pesanan ${params.orderNumber} — ZEAN TENAN` },
+      {
+        name: "description",
+        content: `Detail pesanan ${params.orderNumber} — pantau status pengiriman gamis dan daster original ZEAN TENAN.`,
+      },
+    ],
+  }),
   notFoundComponent: () => (
     <AccountLayout title="Pesanan tidak ditemukan">
-      <p className="text-sm text-muted-foreground">Pesanan tidak ditemukan atau bukan milik akun Anda.</p>
+      <p className="text-sm text-muted-foreground">
+        Pesanan tidak ditemukan atau bukan milik akun Anda.
+      </p>
     </AccountLayout>
   ),
   component: OrderDetailPage,
@@ -45,14 +53,19 @@ function OrderDetailPage() {
   const subM = useMutation({
     mutationFn: submit,
     onSuccess: () => {
-      toast.success("Bukti pembayaran terkirim", { description: "Tim kami akan segera memverifikasi." });
+      toast.success("Bukti pembayaran terkirim", {
+        description: "Tim kami akan segera memverifikasi.",
+      });
       qc.invalidateQueries({ queryKey: ["order", orderNumber] });
     },
     onError: (e: any) => toast.error("Gagal", { description: e.message }),
   });
   const cancelM = useMutation({
     mutationFn: cancel,
-    onSuccess: () => { toast.success("Pesanan dibatalkan"); qc.invalidateQueries({ queryKey: ["order", orderNumber] }); },
+    onSuccess: () => {
+      toast.success("Pesanan dibatalkan");
+      qc.invalidateQueries({ queryKey: ["order", orderNumber] });
+    },
   });
 
   async function handleUpload(form: HTMLFormElement) {
@@ -63,10 +76,18 @@ function OrderDetailPage() {
     setUploading(true);
     const { data: sess } = await supabase.auth.getSession();
     const userId = sess.session?.user.id;
-    if (!userId) { setUploading(false); return; }
+    if (!userId) {
+      setUploading(false);
+      return;
+    }
     const path = `${userId}/${order.id}/${Date.now()}-${file.name.replace(/[^a-z0-9._-]/gi, "_")}`;
-    const { error: upErr } = await supabase.storage.from("payment-proofs").upload(path, file, { upsert: false });
-    if (upErr) { setUploading(false); return toast.error("Gagal mengunggah", { description: upErr.message }); }
+    const { error: upErr } = await supabase.storage
+      .from("payment-proofs")
+      .upload(path, file, { upsert: false });
+    if (upErr) {
+      setUploading(false);
+      return toast.error("Gagal mengunggah", { description: upErr.message });
+    }
     await subM.mutateAsync({
       data: {
         orderId: order.id,
@@ -74,7 +95,9 @@ function OrderDetailPage() {
         bankName: String(fd.get("bank") ?? order.bank_name ?? ""),
         senderName: String(fd.get("sender") ?? ""),
         amount: Number(fd.get("amount") ?? order.total),
-        transferredAt: new Date(String(fd.get("transferred") || new Date().toISOString())).toISOString(),
+        transferredAt: new Date(
+          String(fd.get("transferred") || new Date().toISOString()),
+        ).toISOString(),
       },
     });
     setUploading(false);
@@ -85,7 +108,10 @@ function OrderDetailPage() {
   const canCancel = ["menunggu_pembayaran", "menunggu_verifikasi"].includes(order.status);
 
   return (
-    <AccountLayout title={`Pesanan ${order.order_number}`} description={`Dibuat pada ${formatDateID(order.created_at)}`}>
+    <AccountLayout
+      title={`Pesanan ${order.order_number}`}
+      description={`Dibuat pada ${formatDateID(order.created_at)}`}
+    >
       <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
         <div className="space-y-8">
           {/* Timeline */}
@@ -93,11 +119,16 @@ function OrderDetailPage() {
             <h3 className="font-display text-lg">Status</h3>
             <ol className="mt-4 space-y-3">
               {ORDER_STATUS_FLOW.map((s, i) => {
-                const reached = ORDER_STATUS_FLOW.indexOf(order.status as any) >= i || order.status === "selesai";
+                const reached =
+                  ORDER_STATUS_FLOW.indexOf(order.status as any) >= i || order.status === "selesai";
                 return (
                   <li key={s} className="flex items-center gap-3 text-sm">
-                    <span className={`h-2 w-2 rounded-full ${reached ? "bg-primary" : "bg-border"}`} />
-                    <span className={reached ? "text-foreground" : "text-muted-foreground"}>{ORDER_STATUS_LABEL[s]}</span>
+                    <span
+                      className={`h-2 w-2 rounded-full ${reached ? "bg-primary" : "bg-border"}`}
+                    />
+                    <span className={reached ? "text-foreground" : "text-muted-foreground"}>
+                      {ORDER_STATUS_LABEL[s]}
+                    </span>
                   </li>
                 );
               })}
@@ -109,7 +140,10 @@ function OrderDetailPage() {
               )}
             </ol>
             {order.tracking_number && (
-              <p className="mt-4 text-xs text-muted-foreground">Nomor Resi: <span className="font-mono text-foreground">{order.tracking_number}</span></p>
+              <p className="mt-4 text-xs text-muted-foreground">
+                Nomor Resi:{" "}
+                <span className="font-mono text-foreground">{order.tracking_number}</span>
+              </p>
             )}
           </section>
 
@@ -123,8 +157,12 @@ function OrderDetailPage() {
                 <li key={it.id} className="flex justify-between gap-4 p-6 text-sm">
                   <div>
                     <p className="font-medium text-foreground">{it.product_name}</p>
-                    {it.variant_label && <p className="text-xs text-muted-foreground">{it.variant_label}</p>}
-                    <p className="mt-1 text-xs text-muted-foreground">{it.quantity} × {formatIDR(it.unit_price)}</p>
+                    {it.variant_label && (
+                      <p className="text-xs text-muted-foreground">{it.variant_label}</p>
+                    )}
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {it.quantity} × {formatIDR(it.unit_price)}
+                    </p>
                   </div>
                   <span className="text-foreground">{formatIDR(it.subtotal)}</span>
                 </li>
@@ -137,13 +175,19 @@ function OrderDetailPage() {
             <section className="border border-border p-6">
               <h3 className="font-display text-lg">Pembayaran</h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Silakan transfer total <strong className="text-foreground">{formatIDR(order.total)}</strong> ke rekening
-                <strong className="text-foreground"> {order.bank_name}</strong> atas nama ZEAN TENAN. Batas waktu pembayaran:
-                <strong className="text-foreground"> {formatDateID(order.payment_deadline)}</strong>.
+                Silakan transfer total{" "}
+                <strong className="text-foreground">{formatIDR(order.total)}</strong> ke rekening
+                <strong className="text-foreground"> {order.bank_name}</strong> atas nama ZEAN
+                TENAN. Batas waktu pembayaran:
+                <strong className="text-foreground"> {formatDateID(order.payment_deadline)}</strong>
+                .
               </p>
               <form
                 className="mt-4 space-y-3"
-                onSubmit={(e) => { e.preventDefault(); handleUpload(e.currentTarget); }}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleUpload(e.currentTarget);
+                }}
               >
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
@@ -156,18 +200,40 @@ function OrderDetailPage() {
                   </div>
                   <div>
                     <Label>Jumlah Transfer (Rp)</Label>
-                    <Input name="amount" type="number" min={0} className="rounded-none" defaultValue={Number(order.total)} required />
+                    <Input
+                      name="amount"
+                      type="number"
+                      min={0}
+                      className="rounded-none"
+                      defaultValue={Number(order.total)}
+                      required
+                    />
                   </div>
                   <div>
                     <Label>Tanggal Transfer</Label>
-                    <Input name="transferred" type="datetime-local" className="rounded-none" required />
+                    <Input
+                      name="transferred"
+                      type="datetime-local"
+                      className="rounded-none"
+                      required
+                    />
                   </div>
                 </div>
                 <div>
                   <Label>Bukti Transfer (JPG/PNG, maks 5 MB)</Label>
-                  <Input name="file" type="file" accept="image/png,image/jpeg" className="rounded-none" required />
+                  <Input
+                    name="file"
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    className="rounded-none"
+                    required
+                  />
                 </div>
-                <Button type="submit" disabled={uploading || subM.isPending} className="rounded-none">
+                <Button
+                  type="submit"
+                  disabled={uploading || subM.isPending}
+                  className="rounded-none"
+                >
                   Kirim Bukti Pembayaran
                 </Button>
               </form>
@@ -181,7 +247,9 @@ function OrderDetailPage() {
               <ol className="mt-3 space-y-2 text-xs text-muted-foreground">
                 {history.map((h: any) => (
                   <li key={h.id} className="flex justify-between gap-4">
-                    <span>{ORDER_STATUS_LABEL[h.status]} — {h.notes ?? ""}</span>
+                    <span>
+                      {ORDER_STATUS_LABEL[h.status]} — {h.notes ?? ""}
+                    </span>
                     <span>{formatDateID(h.created_at)}</span>
                   </li>
                 ))}
@@ -193,7 +261,9 @@ function OrderDetailPage() {
             <Button
               variant="outline"
               className="rounded-none"
-              onClick={() => cancelM.mutate({ data: { orderId: order.id, reason: "Dibatalkan oleh pembeli" } })}
+              onClick={() =>
+                cancelM.mutate({ data: { orderId: order.id, reason: "Dibatalkan oleh pembeli" } })
+              }
             >
               Batalkan Pesanan
             </Button>
@@ -205,16 +275,31 @@ function OrderDetailPage() {
           <p className="mt-2 text-foreground">{order.recipient_name}</p>
           <p className="text-muted-foreground">{order.recipient_phone}</p>
           <p className="mt-3 text-muted-foreground">
-            {order.ship_full_address}, {order.ship_district}, {order.ship_city}, {order.ship_province} {order.ship_postal_code}
+            {order.ship_full_address}, {order.ship_district}, {order.ship_city},{" "}
+            {order.ship_province} {order.ship_postal_code}
           </p>
           <p className="mt-3 text-xs uppercase tracking-[0.15em] text-muted-foreground">Kurir</p>
-          <p>{order.courier} · {order.courier_service}</p>
+          <p>
+            {order.courier} · {order.courier_service}
+          </p>
 
           <dl className="mt-6 space-y-1 border-t border-border pt-4">
-            <div className="flex justify-between"><dt className="text-muted-foreground">Subtotal</dt><dd>{formatIDR(order.subtotal)}</dd></div>
-            <div className="flex justify-between"><dt className="text-muted-foreground">Ongkir</dt><dd>{formatIDR(order.shipping_cost)}</dd></div>
-            <div className="flex justify-between"><dt className="text-muted-foreground">Diskon</dt><dd>− {formatIDR(order.discount)}</dd></div>
-            <div className="flex justify-between border-t border-border pt-2 text-base"><dt>Total</dt><dd className="font-medium">{formatIDR(order.total)}</dd></div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Subtotal</dt>
+              <dd>{formatIDR(order.subtotal)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Ongkir</dt>
+              <dd>{formatIDR(order.shipping_cost)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Diskon</dt>
+              <dd>− {formatIDR(order.discount)}</dd>
+            </div>
+            <div className="flex justify-between border-t border-border pt-2 text-base">
+              <dt>Total</dt>
+              <dd className="font-medium">{formatIDR(order.total)}</dd>
+            </div>
           </dl>
         </aside>
       </div>

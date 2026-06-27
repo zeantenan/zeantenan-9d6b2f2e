@@ -6,7 +6,10 @@ async function ensureCart(supabase: any, userId: string): Promise<string> {
   const { data } = await supabase.from("carts").select("id").eq("user_id", userId).maybeSingle();
   if (data) return data.id;
   const { data: c, error } = await supabase
-    .from("carts").insert({ user_id: userId }).select("id").single();
+    .from("carts")
+    .insert({ user_id: userId })
+    .select("id")
+    .single();
   if (error) throw new Error(error.message);
   return c.id;
 }
@@ -17,7 +20,10 @@ export const getCart = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const cartId = await ensureCart(supabase, userId);
     const { data: cart } = await supabase
-      .from("carts").select("id, voucher_code, notes").eq("id", cartId).single();
+      .from("carts")
+      .select("id, voucher_code, notes")
+      .eq("id", cartId)
+      .single();
     const { data: items } = await supabase
       .from("cart_items")
       .select(
@@ -46,20 +52,29 @@ export const addToCart = createServerFn({ method: "POST" })
     const variantId = data.variantId ?? null;
 
     const { data: dupRows } = await supabase
-      .from("cart_items").select("id, quantity")
-      .eq("cart_id", cartId).eq("product_id", data.productId);
-    const dup = (dupRows ?? []).find((r: any) =>
-      (r.variant_id ?? null) === variantId || (!r.variant_id && !variantId),
+      .from("cart_items")
+      .select("id, quantity")
+      .eq("cart_id", cartId)
+      .eq("product_id", data.productId);
+    const dup = (dupRows ?? []).find(
+      (r: any) => (r.variant_id ?? null) === variantId || (!r.variant_id && !variantId),
     );
 
     if (dup) {
       const { error } = await supabase
-        .from("cart_items").update({ quantity: dup.quantity + qty }).eq("id", dup.id);
+        .from("cart_items")
+        .update({ quantity: dup.quantity + qty })
+        .eq("id", dup.id);
       if (error) throw new Error(error.message);
     } else {
       const { error } = await supabase
         .from("cart_items")
-        .insert({ cart_id: cartId, product_id: data.productId, variant_id: variantId, quantity: qty });
+        .insert({
+          cart_id: cartId,
+          product_id: data.productId,
+          variant_id: variantId,
+          quantity: qty,
+        });
       if (error) throw new Error(error.message);
     }
     return { ok: true };
@@ -72,7 +87,9 @@ export const updateCartItem = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
-      .from("cart_items").update({ quantity: data.quantity }).eq("id", data.itemId);
+      .from("cart_items")
+      .update({ quantity: data.quantity })
+      .eq("id", data.itemId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

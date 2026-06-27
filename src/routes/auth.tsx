@@ -15,9 +15,17 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Masuk atau Daftar — ZEAN TENAN" },
-      { name: "description", content: "Masuk ke akun ZEAN TENAN Anda atau daftar untuk mulai berbelanja gamis dan daster original dari Kota Batik Indonesia." },
+      {
+        name: "description",
+        content:
+          "Masuk ke akun ZEAN TENAN Anda atau daftar untuk mulai berbelanja gamis dan daster original dari Kota Batik Indonesia.",
+      },
       { property: "og:title", content: "Masuk atau Daftar — ZEAN TENAN" },
-      { property: "og:description", content: "Masuk ke akun Anda untuk pengalaman belanja gamis & daster original yang lebih personal." },
+      {
+        property: "og:description",
+        content:
+          "Masuk ke akun Anda untuk pengalaman belanja gamis & daster original yang lebih personal.",
+      },
     ],
   }),
   component: AuthPage,
@@ -47,8 +55,14 @@ function AuthPage() {
     });
   }, [navigate]);
 
-  const loginForm = useForm({ resolver: zodResolver(loginSchema), defaultValues: { email: "", password: "" } });
-  const registerForm = useForm({ resolver: zodResolver(registerSchema), defaultValues: { full_name: "", email: "", password: "" } });
+  const loginForm = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
+  const registerForm = useForm({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { full_name: "", email: "", password: "" },
+  });
   const resetForm = useForm({ resolver: zodResolver(resetSchema), defaultValues: { email: "" } });
 
   async function onLogin(values: z.infer<typeof loginSchema>) {
@@ -84,13 +98,18 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) return toast.error("Gagal mengirim email", { description: error.message });
-    toast.success("Email reset password telah dikirim", { description: "Periksa kotak masuk Anda." });
+    toast.success("Email reset password telah dikirim", {
+      description: "Periksa kotak masuk Anda.",
+    });
     setMode("login");
   }
 
   async function onGoogle() {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } });
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    });
     setLoading(false);
     if (error) return toast.error("Gagal masuk dengan Google", { description: error.message });
   }
@@ -102,7 +121,9 @@ function AuthPage() {
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Akun Anda</p>
             <h1 className="mt-6 font-display text-5xl leading-tight text-foreground">
-              Masuk untuk pengalaman<br />belanja yang lebih personal.
+              Masuk untuk pengalaman
+              <br />
+              belanja yang lebih personal.
             </h1>
             <p className="mt-6 max-w-md text-sm text-muted-foreground">
               Pantau pesanan, simpan alamat, dan kelola wishlist Anda dari satu dasbor sederhana.
@@ -115,10 +136,17 @@ function AuthPage() {
 
         <div className="flex items-start">
           <div className="w-full max-w-md">
-            <Tabs value={mode === "forgot" ? "login" : mode} onValueChange={(v) => setMode(v as any)}>
+            <Tabs
+              value={mode === "forgot" ? "login" : mode}
+              onValueChange={(v) => setMode(v as any)}
+            >
               <TabsList className="grid w-full grid-cols-2 rounded-none">
-                <TabsTrigger value="login" className="rounded-none">Masuk</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-none">Daftar</TabsTrigger>
+                <TabsTrigger value="login" className="rounded-none">
+                  Masuk
+                </TabsTrigger>
+                <TabsTrigger value="register" className="rounded-none">
+                  Daftar
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="login" className="mt-8 space-y-6">
@@ -126,15 +154,26 @@ function AuthPage() {
                   <form onSubmit={resetForm.handleSubmit(onReset)} className="space-y-4">
                     <div>
                       <Label htmlFor="reset-email">Email</Label>
-                      <Input id="reset-email" type="email" className="rounded-none" {...resetForm.register("email")} />
+                      <Input
+                        id="reset-email"
+                        type="email"
+                        className="rounded-none"
+                        {...resetForm.register("email")}
+                      />
                       {resetForm.formState.errors.email && (
-                        <p className="mt-1 text-xs text-destructive">{resetForm.formState.errors.email.message}</p>
+                        <p className="mt-1 text-xs text-destructive">
+                          {resetForm.formState.errors.email.message}
+                        </p>
                       )}
                     </div>
                     <Button disabled={loading} type="submit" className="w-full rounded-none">
                       Kirim tautan reset
                     </Button>
-                    <button type="button" onClick={() => setMode("login")} className="block w-full text-center text-xs text-muted-foreground hover:text-foreground">
+                    <button
+                      type="button"
+                      onClick={() => setMode("login")}
+                      className="block w-full text-center text-xs text-muted-foreground hover:text-foreground"
+                    >
                       Kembali ke halaman masuk
                     </button>
                   </form>
@@ -142,27 +181,56 @@ function AuthPage() {
                   <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
                     <div>
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" className="rounded-none" {...loginForm.register("email")} />
+                      <Input
+                        id="email"
+                        type="email"
+                        className="rounded-none"
+                        {...loginForm.register("email")}
+                      />
                       {loginForm.formState.errors.email && (
-                        <p className="mt-1 text-xs text-destructive">{loginForm.formState.errors.email.message}</p>
+                        <p className="mt-1 text-xs text-destructive">
+                          {loginForm.formState.errors.email.message}
+                        </p>
                       )}
                     </div>
                     <div>
                       <Label htmlFor="password">Password</Label>
-                      <Input id="password" type="password" className="rounded-none" {...loginForm.register("password")} />
+                      <Input
+                        id="password"
+                        type="password"
+                        className="rounded-none"
+                        {...loginForm.register("password")}
+                      />
                       {loginForm.formState.errors.password && (
-                        <p className="mt-1 text-xs text-destructive">{loginForm.formState.errors.password.message}</p>
+                        <p className="mt-1 text-xs text-destructive">
+                          {loginForm.formState.errors.password.message}
+                        </p>
                       )}
                     </div>
                     <div className="flex items-center justify-between text-xs">
-                      <Link to="/" className="text-muted-foreground hover:text-foreground">Kembali ke beranda</Link>
-                      <button type="button" onClick={() => setMode("forgot")} className="text-primary hover:underline">Lupa password?</button>
+                      <Link to="/" className="text-muted-foreground hover:text-foreground">
+                        Kembali ke beranda
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setMode("forgot")}
+                        className="text-primary hover:underline"
+                      >
+                        Lupa password?
+                      </button>
                     </div>
-                    <Button disabled={loading} type="submit" className="w-full rounded-none">Masuk</Button>
+                    <Button disabled={loading} type="submit" className="w-full rounded-none">
+                      Masuk
+                    </Button>
                   </form>
                 )}
                 <OrDivider />
-                <Button onClick={onGoogle} variant="outline" disabled={loading} className="w-full rounded-none">
+                <Button
+                  onClick={onGoogle}
+                  variant="outline"
+                  disabled={loading}
+                  className="w-full rounded-none"
+                >
                   Masuk dengan Google
                 </Button>
               </TabsContent>
@@ -171,30 +239,59 @@ function AuthPage() {
                 <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
                   <div>
                     <Label htmlFor="r-name">Nama Lengkap</Label>
-                    <Input id="r-name" className="rounded-none" {...registerForm.register("full_name")} />
+                    <Input
+                      id="r-name"
+                      className="rounded-none"
+                      {...registerForm.register("full_name")}
+                    />
                     {registerForm.formState.errors.full_name && (
-                      <p className="mt-1 text-xs text-destructive">{registerForm.formState.errors.full_name.message}</p>
+                      <p className="mt-1 text-xs text-destructive">
+                        {registerForm.formState.errors.full_name.message}
+                      </p>
                     )}
                   </div>
                   <div>
                     <Label htmlFor="r-email">Email</Label>
-                    <Input id="r-email" type="email" className="rounded-none" {...registerForm.register("email")} />
+                    <Input
+                      id="r-email"
+                      type="email"
+                      className="rounded-none"
+                      {...registerForm.register("email")}
+                    />
                     {registerForm.formState.errors.email && (
-                      <p className="mt-1 text-xs text-destructive">{registerForm.formState.errors.email.message}</p>
+                      <p className="mt-1 text-xs text-destructive">
+                        {registerForm.formState.errors.email.message}
+                      </p>
                     )}
                   </div>
                   <div>
                     <Label htmlFor="r-pass">Password</Label>
-                    <Input id="r-pass" type="password" className="rounded-none" {...registerForm.register("password")} />
+                    <Input
+                      id="r-pass"
+                      type="password"
+                      className="rounded-none"
+                      {...registerForm.register("password")}
+                    />
                     {registerForm.formState.errors.password && (
-                      <p className="mt-1 text-xs text-destructive">{registerForm.formState.errors.password.message}</p>
+                      <p className="mt-1 text-xs text-destructive">
+                        {registerForm.formState.errors.password.message}
+                      </p>
                     )}
-                    <p className="mt-1 text-xs text-muted-foreground">Minimal 8 karakter, hindari password yang pernah bocor.</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Minimal 8 karakter, hindari password yang pernah bocor.
+                    </p>
                   </div>
-                  <Button disabled={loading} type="submit" className="w-full rounded-none">Buat Akun</Button>
+                  <Button disabled={loading} type="submit" className="w-full rounded-none">
+                    Buat Akun
+                  </Button>
                 </form>
                 <OrDivider />
-                <Button onClick={onGoogle} variant="outline" disabled={loading} className="w-full rounded-none">
+                <Button
+                  onClick={onGoogle}
+                  variant="outline"
+                  disabled={loading}
+                  className="w-full rounded-none"
+                >
                   Daftar dengan Google
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">

@@ -25,10 +25,7 @@ export const updateProfile = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
-      .from("profiles")
-      .update(data)
-      .eq("id", context.userId);
+    const { error } = await context.supabase.from("profiles").update(data).eq("id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -71,12 +68,18 @@ export const upsertAddress = createServerFn({ method: "POST" })
     }
     if (data.id) {
       const { error } = await supabase
-        .from("addresses").update(data.data).eq("id", data.id).eq("user_id", userId);
+        .from("addresses")
+        .update(data.data)
+        .eq("id", data.id)
+        .eq("user_id", userId);
       if (error) throw new Error(error.message);
       return { id: data.id };
     }
     const { data: row, error } = await supabase
-      .from("addresses").insert({ ...data.data, user_id: userId }).select("id").single();
+      .from("addresses")
+      .insert({ ...data.data, user_id: userId })
+      .select("id")
+      .single();
     if (error) throw new Error(error.message);
     return { id: row.id };
   });
@@ -86,7 +89,10 @@ export const deleteAddress = createServerFn({ method: "POST" })
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
-      .from("addresses").delete().eq("id", data.id).eq("user_id", context.userId);
+      .from("addresses")
+      .delete()
+      .eq("id", data.id)
+      .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

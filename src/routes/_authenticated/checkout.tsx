@@ -11,7 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getCart } from "@/lib/cart.functions";
 import { listAddresses } from "@/lib/account.functions";
@@ -51,10 +57,16 @@ const schema = z.object({
 });
 
 export const Route = createFileRoute("/_authenticated/checkout")({
-  head: () => ({ meta: [
-    { title: "Checkout — ZEAN TENAN" },
-    { name: "description", content: "Selesaikan pesanan gamis dan daster original ZEAN TENAN Anda. Pembayaran via transfer bank." },
-  ] }),
+  head: () => ({
+    meta: [
+      { title: "Checkout — ZEAN TENAN" },
+      {
+        name: "description",
+        content:
+          "Selesaikan pesanan gamis dan daster original ZEAN TENAN Anda. Pembayaran via transfer bank.",
+      },
+    ],
+  }),
   component: CheckoutPage,
 });
 
@@ -66,7 +78,9 @@ function CheckoutPage() {
 
   const items = cart.items ?? [];
   const subtotal = items.reduce((acc: number, it: any) => {
-    const price = Number(it.product_variants?.price_override ?? it.products?.discount_price ?? it.products?.price ?? 0);
+    const price = Number(
+      it.product_variants?.price_override ?? it.products?.discount_price ?? it.products?.price ?? 0,
+    );
     return acc + price * it.quantity;
   }, 0);
 
@@ -115,7 +129,9 @@ function CheckoutPage() {
   const m = useMutation({
     mutationFn: place,
     onSuccess: (res: any) => {
-      toast.success("Pesanan berhasil dibuat", { description: `Nomor pesanan: ${res.order_number}` });
+      toast.success("Pesanan berhasil dibuat", {
+        description: `Nomor pesanan: ${res.order_number}`,
+      });
       navigate({ to: "/pesanan/$orderNumber", params: { orderNumber: res.order_number } });
     },
     onError: (e: any) => toast.error("Gagal membuat pesanan", { description: e.message }),
@@ -168,8 +184,12 @@ function CheckoutPage() {
                     onClick={() => pickAddress(a.id)}
                     className={`border p-4 text-left text-xs ${usingAddrId === a.id ? "border-primary" : "border-border hover:border-foreground"}`}
                   >
-                    <p className="text-sm font-medium text-foreground">{a.recipient_name} · {a.phone}</p>
-                    <p className="mt-1 text-muted-foreground">{a.full_address}, {a.district}, {a.city}, {a.province} {a.postal_code}</p>
+                    <p className="text-sm font-medium text-foreground">
+                      {a.recipient_name} · {a.phone}
+                    </p>
+                    <p className="mt-1 text-muted-foreground">
+                      {a.full_address}, {a.district}, {a.city}, {a.province} {a.postal_code}
+                    </p>
                   </button>
                 ))}
               </div>
@@ -201,7 +221,11 @@ function CheckoutPage() {
                 <Input className="rounded-none" {...form.register("postal_code")} />
               </Field>
             </div>
-            <Field label="Alamat Lengkap" className="mt-4" error={form.formState.errors.full_address?.message}>
+            <Field
+              label="Alamat Lengkap"
+              className="mt-4"
+              error={form.formState.errors.full_address?.message}
+            >
               <Textarea rows={3} className="rounded-none" {...form.register("full_address")} />
             </Field>
           </section>
@@ -210,10 +234,14 @@ function CheckoutPage() {
             <h3 className="font-display text-lg">Pengiriman</h3>
             <Field label="Kurir & Layanan" className="mt-4">
               <Select value={courierCombo} onValueChange={(v) => form.setValue("courier_combo", v)}>
-                <SelectTrigger className="rounded-none"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="rounded-none">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {COURIERS.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>{c.label} — {formatIDR(c.cost)}</SelectItem>
+                    <SelectItem key={c.value} value={c.value}>
+                      {c.label} — {formatIDR(c.cost)}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -223,50 +251,85 @@ function CheckoutPage() {
           <section>
             <h3 className="font-display text-lg">Pembayaran</h3>
             <Field label="Transfer Bank" className="mt-4">
-              <Select value={form.watch("bank_name")} onValueChange={(v) => form.setValue("bank_name", v)}>
-                <SelectTrigger className="rounded-none"><SelectValue /></SelectTrigger>
+              <Select
+                value={form.watch("bank_name")}
+                onValueChange={(v) => form.setValue("bank_name", v)}
+              >
+                <SelectTrigger className="rounded-none">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {BANKS.map((b) => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}
+                  {BANKS.map((b) => (
+                    <SelectItem key={b.value} value={b.value}>
+                      {b.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </Field>
             <p className="mt-2 text-xs text-muted-foreground">
-              Setelah pesanan dibuat Anda akan diarahkan ke halaman pembayaran untuk mengunggah bukti transfer.
+              Setelah pesanan dibuat Anda akan diarahkan ke halaman pembayaran untuk mengunggah
+              bukti transfer.
             </p>
           </section>
 
           <section>
             <h3 className="font-display text-lg">Catatan</h3>
-            <Textarea rows={3} className="mt-2 rounded-none" placeholder="Catatan opsional untuk penjual…" {...form.register("notes")} />
+            <Textarea
+              rows={3}
+              className="mt-2 rounded-none"
+              placeholder="Catatan opsional untuk penjual…"
+              {...form.register("notes")}
+            />
           </section>
 
           <label className="flex items-start gap-3 text-sm">
-            <Checkbox checked={form.watch("agreed")} onCheckedChange={(v) => form.setValue("agreed", Boolean(v))} className="mt-0.5 rounded-none" />
+            <Checkbox
+              checked={form.watch("agreed")}
+              onCheckedChange={(v) => form.setValue("agreed", Boolean(v))}
+              className="mt-0.5 rounded-none"
+            />
             <span className="text-muted-foreground">
               Saya menyetujui syarat &amp; ketentuan pemesanan ZEAN TENAN dan kebijakan pengiriman.
             </span>
           </label>
-          {form.formState.errors.agreed && <p className="text-xs text-destructive">{form.formState.errors.agreed.message}</p>}
+          {form.formState.errors.agreed && (
+            <p className="text-xs text-destructive">{form.formState.errors.agreed.message}</p>
+          )}
         </div>
 
         <aside className="h-fit border border-border p-6">
           <h3 className="font-display text-xl text-foreground">Ringkasan</h3>
           <ul className="mt-4 space-y-3 text-sm">
             {items.map((it: any) => {
-              const price = Number(it.product_variants?.price_override ?? it.products?.discount_price ?? it.products?.price ?? 0);
+              const price = Number(
+                it.product_variants?.price_override ??
+                  it.products?.discount_price ??
+                  it.products?.price ??
+                  0,
+              );
               return (
                 <li key={it.id} className="flex justify-between gap-3">
-                  <span className="flex-1 text-muted-foreground">{it.products?.name} × {it.quantity}</span>
+                  <span className="flex-1 text-muted-foreground">
+                    {it.products?.name} × {it.quantity}
+                  </span>
                   <span className="text-foreground">{formatIDR(price * it.quantity)}</span>
                 </li>
               );
             })}
           </ul>
           <dl className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
-            <div className="flex justify-between"><dt className="text-muted-foreground">Subtotal</dt><dd>{formatIDR(subtotal)}</dd></div>
-            <div className="flex justify-between"><dt className="text-muted-foreground">Ongkir</dt><dd>{formatIDR(shipping)}</dd></div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Subtotal</dt>
+              <dd>{formatIDR(subtotal)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Ongkir</dt>
+              <dd>{formatIDR(shipping)}</dd>
+            </div>
             <div className="flex justify-between border-t border-border pt-2 text-base">
-              <dt>Total</dt><dd className="font-medium text-foreground">{formatIDR(total)}</dd>
+              <dt>Total</dt>
+              <dd className="font-medium text-foreground">{formatIDR(total)}</dd>
             </div>
           </dl>
           <Button type="submit" disabled={m.isPending} className="mt-6 w-full rounded-none">
@@ -278,7 +341,17 @@ function CheckoutPage() {
   );
 }
 
-function Field({ label, children, error, className }: { label: string; children: React.ReactNode; error?: string; className?: string }) {
+function Field({
+  label,
+  children,
+  error,
+  className,
+}: {
+  label: string;
+  children: React.ReactNode;
+  error?: string;
+  className?: string;
+}) {
   return (
     <div className={className}>
       <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">{label}</Label>

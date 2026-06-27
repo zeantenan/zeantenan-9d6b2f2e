@@ -28,21 +28,35 @@ export const placeOrder = createServerFn({ method: "POST" })
 
     // Load cart
     const { data: cart } = await supabase
-      .from("carts").select("id, voucher_code").eq("user_id", userId).maybeSingle();
+      .from("carts")
+      .select("id, voucher_code")
+      .eq("user_id", userId)
+      .maybeSingle();
     if (!cart) throw new Error("Keranjang Anda kosong.");
     const { data: items } = await supabase
       .from("cart_items")
-      .select("id, quantity, product_id, variant_id, products(name, price, discount_price, product_images(url, sort_order)), product_variants(size, color, price_override, stock)")
+      .select(
+        "id, quantity, product_id, variant_id, products(name, price, discount_price, product_images(url, sort_order)), product_variants(size, color, price_override, stock)",
+      )
       .eq("cart_id", cart.id);
     if (!items || items.length === 0) throw new Error("Keranjang Anda kosong.");
 
     let subtotal = 0;
     const orderItems = items.map((it: any) => {
-      const unit = Number(it.product_variants?.price_override ?? it.products?.discount_price ?? it.products?.price ?? 0);
+      const unit = Number(
+        it.product_variants?.price_override ??
+          it.products?.discount_price ??
+          it.products?.price ??
+          0,
+      );
       const lineSub = unit * it.quantity;
       subtotal += lineSub;
-      const variantLabel = [it.product_variants?.size, it.product_variants?.color].filter(Boolean).join(" / ") || null;
-      const image = (it.products?.product_images ?? []).slice().sort((a: any, b: any) => a.sort_order - b.sort_order)[0]?.url ?? null;
+      const variantLabel =
+        [it.product_variants?.size, it.product_variants?.color].filter(Boolean).join(" / ") || null;
+      const image =
+        (it.products?.product_images ?? [])
+          .slice()
+          .sort((a: any, b: any) => a.sort_order - b.sort_order)[0]?.url ?? null;
       return {
         product_id: it.product_id,
         variant_id: it.variant_id,
@@ -72,7 +86,10 @@ export const placeOrder = createServerFn({ method: "POST" })
         order_number: orderNumber,
         user_id: userId,
         status: "menunggu_pembayaran",
-        subtotal, shipping_cost: data.shipping_cost, discount, total,
+        subtotal,
+        shipping_cost: data.shipping_cost,
+        discount,
+        total,
         voucher_code: cart.voucher_code,
         recipient_name: data.recipient_name,
         recipient_phone: data.recipient_phone,
@@ -98,8 +115,10 @@ export const placeOrder = createServerFn({ method: "POST" })
     if (oiErr) throw new Error(oiErr.message);
 
     await supabase.from("order_status_history").insert({
-      order_id: order.id, status: "menunggu_pembayaran",
-      notes: "Pesanan dibuat, menunggu pembayaran.", changed_by: userId,
+      order_id: order.id,
+      status: "menunggu_pembayaran",
+      notes: "Pesanan dibuat, menunggu pembayaran.",
+      changed_by: userId,
     });
 
     // Clear cart
@@ -136,32 +155,51 @@ export const getOrder = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!order) return null;
-    const { data: items } = await supabase
-      .from("order_items").select("*").eq("order_id", order.id);
+    const { data: items } = await supabase.from("order_items").select("*").eq("order_id", order.id);
     const { data: history } = await supabase
-      .from("order_status_history").select("*").eq("order_id", order.id).order("created_at");
+      .from("order_status_history")
+      .select("*")
+      .eq("order_id", order.id)
+      .order("created_at");
     const { data: proofs } = await supabase
-      .from("payment_proofs").select("*").eq("order_id", order.id).order("created_at", { ascending: false });
+      .from("payment_proofs")
+      .select("*")
+      .eq("order_id", order.id)
+      .order("created_at", { ascending: false });
     return { order, items: items ?? [], history: history ?? [], proofs: proofs ?? [] };
   });
 
 export const submitPaymentProof = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { orderId: string; filePath: string; bankName: string; senderName: string; amount: number; transferredAt: string }) =>
-    z.object({
-      orderId: z.string().uuid(),
-      filePath: z.string().min(3),
-      bankName: z.string().trim().min(2).max(60),
-      senderName: z.string().trim().min(2).max(120),
-      amount: z.number().min(0),
-      transferredAt: z.string(),
-    }).parse(d),
+  .inputValidator(
+    (d: {
+      orderId: string;
+      filePath: string;
+      bankName: string;
+      senderName: string;
+      amount: number;
+      transferredAt: string;
+    }) =>
+      z
+        .object({
+          orderId: z.string().uuid(),
+          filePath: z.string().min(3),
+          bankName: z.string().trim().min(2).max(60),
+          senderName: z.string().trim().min(2).max(120),
+          amount: z.number().min(0),
+          transferredAt: z.string(),
+        })
+        .parse(d),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     // Ensure order belongs to user
     const { data: order } = await supabase
-      .from("orders").select("id, status").eq("id", data.orderId).eq("user_id", userId).maybeSingle();
+      .from("orders")
+      .select("id, status")
+      .eq("id", data.orderId)
+      .eq("user_id", userId)
+      .maybeSingle();
     if (!order) throw new Error("Pesanan tidak ditemukan.");
 
     const { error: ppErr } = await supabase.from("payment_proofs").insert({
@@ -177,8 +215,10 @@ export const submitPaymentProof = createServerFn({ method: "POST" })
 
     await supabase.from("orders").update({ status: "menunggu_verifikasi" }).eq("id", data.orderId);
     await supabase.from("order_status_history").insert({
-      order_id: data.orderId, status: "menunggu_verifikasi",
-      notes: "Bukti pembayaran diunggah, menunggu verifikasi admin.", changed_by: userId,
+      order_id: data.orderId,
+      status: "menunggu_verifikasi",
+      notes: "Bukti pembayaran diunggah, menunggu verifikasi admin.",
+      changed_by: userId,
     });
     return { ok: true };
   });
@@ -191,14 +231,23 @@ export const cancelOrder = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: order } = await supabase
-      .from("orders").select("status").eq("id", data.orderId).eq("user_id", userId).maybeSingle();
+      .from("orders")
+      .select("status")
+      .eq("id", data.orderId)
+      .eq("user_id", userId)
+      .maybeSingle();
     if (!order) throw new Error("Pesanan tidak ditemukan.");
     if (!["menunggu_pembayaran", "menunggu_verifikasi"].includes(order.status))
       throw new Error("Pesanan tidak dapat dibatalkan pada status ini.");
-    await supabase.from("orders").update({ status: "dibatalkan", cancelled_reason: data.reason ?? null }).eq("id", data.orderId);
+    await supabase
+      .from("orders")
+      .update({ status: "dibatalkan", cancelled_reason: data.reason ?? null })
+      .eq("id", data.orderId);
     await supabase.from("order_status_history").insert({
-      order_id: data.orderId, status: "dibatalkan",
-      notes: data.reason ?? "Dibatalkan oleh pembeli.", changed_by: userId,
+      order_id: data.orderId,
+      status: "dibatalkan",
+      notes: data.reason ?? "Dibatalkan oleh pembeli.",
+      changed_by: userId,
     });
     return { ok: true };
   });

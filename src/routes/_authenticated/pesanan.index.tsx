@@ -7,10 +7,15 @@ import { formatIDR, formatDateID, ORDER_STATUS_LABEL } from "@/lib/format";
 const qo = queryOptions({ queryKey: ["orders"], queryFn: () => listOrders() });
 
 export const Route = createFileRoute("/_authenticated/pesanan/")({
-  head: () => ({ meta: [
-    { title: "Riwayat Pesanan — ZEAN TENAN" },
-    { name: "description", content: "Pantau semua pesanan gamis dan daster original ZEAN TENAN Anda di satu tempat." },
-  ] }),
+  head: () => ({
+    meta: [
+      { title: "Riwayat Pesanan — ZEAN TENAN" },
+      {
+        name: "description",
+        content: "Pantau semua pesanan gamis dan daster original ZEAN TENAN Anda di satu tempat.",
+      },
+    ],
+  }),
   component: OrdersPage,
 });
 
@@ -20,7 +25,10 @@ function OrdersPage() {
     <AccountLayout title="Riwayat Pesanan" description="Pantau semua pesanan Anda di satu tempat.">
       {data.length === 0 ? (
         <div className="border border-dashed border-border p-16 text-center text-sm text-muted-foreground">
-          Anda belum memiliki pesanan. <Link to="/produk" className="text-primary underline">Mulai belanja</Link>
+          Anda belum memiliki pesanan.{" "}
+          <Link to="/produk" className="text-primary underline">
+            Mulai belanja
+          </Link>
         </div>
       ) : (
         <div className="divide-y divide-border border-y border-border">
@@ -37,7 +45,9 @@ function OrdersPage() {
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-foreground">{formatIDR(o.total)}</p>
-                <p className="text-xs uppercase tracking-[0.15em] text-primary">{ORDER_STATUS_LABEL[o.status]}</p>
+                <p className="text-xs uppercase tracking-[0.15em] text-primary">
+                  {ORDER_STATUS_LABEL[o.status]}
+                </p>
               </div>
             </Link>
           ))}

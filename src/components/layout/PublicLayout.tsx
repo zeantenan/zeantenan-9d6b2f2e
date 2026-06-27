@@ -47,14 +47,20 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           </div>
           <div className="flex items-center gap-1">
             <Button asChild variant="ghost" size="icon" aria-label="Cari produk">
-              <Link to="/cari"><Search className="h-5 w-5" /></Link>
+              <Link to="/cari">
+                <Search className="h-5 w-5" />
+              </Link>
             </Button>
             <Button asChild variant="ghost" size="icon" aria-label="Keranjang">
-              <Link to="/keranjang"><ShoppingBag className="h-5 w-5" /></Link>
+              <Link to="/keranjang">
+                <ShoppingBag className="h-5 w-5" />
+              </Link>
             </Button>
             {hasSession ? (
               <Button asChild variant="ghost" size="icon" aria-label="Akun">
-                <Link to="/akun"><User className="h-5 w-5" /></Link>
+                <Link to="/akun">
+                  <User className="h-5 w-5" />
+                </Link>
               </Button>
             ) : (
               <Button asChild variant="outline" size="sm" className="ml-2 hidden sm:inline-flex">
@@ -76,16 +82,14 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           <nav className="border-t border-border bg-background md:hidden">
             <div className="mx-auto flex max-w-7xl flex-col px-4 py-3 sm:px-6">
               {NAV.map((n) => (
-                <Link
-                  key={n.to}
-                  to={n.to}
-                  className="py-2 text-sm text-foreground"
-                >
+                <Link key={n.to} to={n.to} className="py-2 text-sm text-foreground">
                   {n.label}
                 </Link>
               ))}
               {!hasSession && (
-                <Link to="/auth" className="py-2 text-sm font-medium text-primary">Masuk / Daftar</Link>
+                <Link to="/auth" className="py-2 text-sm font-medium text-primary">
+                  Masuk / Daftar
+                </Link>
               )}
             </div>
           </nav>
@@ -99,27 +103,35 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           <div>
             <Logo />
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-              Original Gamis &amp; Daster dari Kota Batik Indonesia. Setiap helai
-              dikerjakan dengan ketelitian pengrajin Pekalongan, dikirim langsung
-              dari sentra batik ke rumah Anda.
+              Original Gamis &amp; Daster dari Kota Batik Indonesia. Setiap helai dikerjakan dengan
+              ketelitian pengrajin Pekalongan, dikirim langsung dari sentra batik ke rumah Anda.
             </p>
           </div>
-          <FooterCol title="Belanja" items={[
-            { to: "/produk", label: "Semua Produk" },
-            { to: "/kategori/gamis", label: "Gamis" },
-            { to: "/kategori/daster", label: "Daster" },
-          ]} />
-          <FooterCol title="Akun" items={[
-            { to: "/auth", label: "Masuk / Daftar" },
-            { to: "/akun", label: "Dasbor Akun" },
-            { to: "/pesanan", label: "Riwayat Pesanan" },
-            { to: "/wishlist", label: "Wishlist" },
-          ]} />
-          <FooterCol title="Bantuan" items={[
-            { to: "/produk", label: "Panduan Ukuran" },
-            { to: "/produk", label: "Cara Pemesanan" },
-            { to: "/produk", label: "Kebijakan Pengembalian" },
-          ]} />
+          <FooterCol
+            title="Belanja"
+            items={[
+              { to: "/produk", label: "Semua Produk" },
+              { to: "/kategori/gamis", label: "Gamis" },
+              { to: "/kategori/daster", label: "Daster" },
+            ]}
+          />
+          <FooterCol
+            title="Akun"
+            items={[
+              { to: "/auth", label: "Masuk / Daftar" },
+              { to: "/akun", label: "Dasbor Akun" },
+              { to: "/pesanan", label: "Riwayat Pesanan" },
+              { to: "/wishlist", label: "Wishlist" },
+            ]}
+          />
+          <FooterCol
+            title="Bantuan"
+            items={[
+              { to: "/produk", label: "Panduan Ukuran" },
+              { to: "/produk", label: "Cara Pemesanan" },
+              { to: "/produk", label: "Kebijakan Pengembalian" },
+            ]}
+          />
         </div>
         <div className="border-t border-border">
           <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-2 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:px-6 lg:px-8">
@@ -139,7 +151,9 @@ function FooterCol({ title, items }: { title: string; items: { to: string; label
       <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
         {items.map((i) => (
           <li key={i.to + i.label}>
-            <Link to={i.to} className="transition-colors hover:text-foreground">{i.label}</Link>
+            <Link to={i.to} className="transition-colors hover:text-foreground">
+              {i.label}
+            </Link>
           </li>
         ))}
       </ul>
