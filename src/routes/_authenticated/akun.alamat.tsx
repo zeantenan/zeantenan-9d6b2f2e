@@ -74,7 +74,7 @@ function AlamatPage() {
     });
     setShowForm(true);
   }
-  function openEdit(a: any) {
+  function openEdit(a: Address) {
     setEditing(a.id);
     form.reset({
       label: a.label ?? "",
@@ -122,7 +122,7 @@ function AlamatPage() {
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
-          {data.map((a: any) => (
+          {(data as Address[]).map((a) => (
             <div key={a.id} className="border border-border p-5">
               <div className="flex items-start justify-between">
                 <div>

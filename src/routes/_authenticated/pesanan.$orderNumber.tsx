@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { getOrder, submitPaymentProof, cancelOrder } from "@/lib/orders.functions";
 import { formatIDR, formatDateID, ORDER_STATUS_LABEL, ORDER_STATUS_FLOW } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
+import type { OrderDetail, OrderItem, OrderHistoryItem } from "@/lib/types";
 
 const qo = (n: string) =>
   queryOptions({ queryKey: ["order", n], queryFn: () => getOrder({ data: { orderNumber: n } }) });
@@ -46,9 +47,9 @@ function OrderDetailPage() {
   const cancel = useServerFn(cancelOrder);
   const [uploading, setUploading] = useState(false);
 
-  const order: any = data!.order;
-  const items: any[] = data!.items;
-  const history: any[] = data!.history;
+  const order = data!.order as OrderDetail;
+  const items = data!.items as OrderItem[];
+  const history = data!.history as OrderHistoryItem[];
 
   const subM = useMutation({
     mutationFn: submit,
@@ -58,7 +59,7 @@ function OrderDetailPage() {
       });
       qc.invalidateQueries({ queryKey: ["order", orderNumber] });
     },
-    onError: (e: any) => toast.error("Gagal", { description: e.message }),
+    onError: (e: Error) => toast.error("Gagal", { description: e.message }),
   });
   const cancelM = useMutation({
     mutationFn: cancel,

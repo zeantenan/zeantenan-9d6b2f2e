@@ -3,6 +3,7 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { AccountLayout } from "@/components/layout/AccountLayout";
 import { listOrders } from "@/lib/orders.functions";
 import { formatIDR, formatDateID, ORDER_STATUS_LABEL } from "@/lib/format";
+import type { OrderListItem } from "@/lib/types";
 
 const qo = queryOptions({ queryKey: ["orders"], queryFn: () => listOrders() });
 
@@ -32,7 +33,7 @@ function OrdersPage() {
         </div>
       ) : (
         <div className="divide-y divide-border border-y border-border">
-          {data.map((o: any) => (
+          {(data as OrderListItem[]).map((o) => (
             <Link
               key={o.id}
               to="/pesanan/$orderNumber"
