@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { Package, Plus, TrendingUp, Eye } from "lucide-react";
+import { Package, Plus, TrendingUp, Eye, type LucideIcon } from "lucide-react";
 import { adminListProducts, adminListCategories } from "@/lib/admin.functions";
 import { formatIDR } from "@/lib/format";
 
@@ -116,7 +116,7 @@ function StatCard({
   label,
   value,
 }: {
-  icon: any;
+  icon: LucideIcon;
   label: string;
   value: string | number;
 }) {

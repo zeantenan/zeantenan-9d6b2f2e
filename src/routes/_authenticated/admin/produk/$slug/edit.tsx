@@ -3,6 +3,7 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Plus, X, ArrowLeft } from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
 import { adminGetProduct, adminUpdateProduct, adminListCategories } from "@/lib/admin.functions";
 import { formatIDR } from "@/lib/format";
 
@@ -84,10 +85,10 @@ function EditProdukPage() {
       seo_description: product.seo_description || "",
     });
     setImages(
-      (product.product_images || []).map((img: any) => ({ url: img.url, alt: img.alt || "" })),
+      (product.product_images || []).map((img: Database["public"]["Tables"]["product_images"]["Row"]) => ({ url: img.url, alt: img.alt || "" })),
     );
     setVariants(
-      (product.product_variants || []).map((v: any) => ({
+      (product.product_variants || []).map((v: Database["public"]["Tables"]["product_variants"]["Row"]) => ({
         size: v.size || "",
         color: v.color || "",
         stock: String(v.stock ?? "0"),
@@ -137,7 +138,7 @@ function EditProdukPage() {
         price: Number(form.price),
         discount_price: form.discount_price ? Number(form.discount_price) : null,
         weight_gram: Number(form.weight_gram),
-        status: form.status as any,
+        status: form.status as Database["public"]["Enums"]["product_status"],
         seo_title: form.seo_title || null,
         seo_description: form.seo_description || null,
         images: images.map((img, i) => ({ url: img.url, alt: img.alt || null, sort_order: i })),
@@ -150,8 +151,8 @@ function EditProdukPage() {
       });
       toast.success("Produk berhasil diperbarui");
       navigate({ to: "/admin/produk" });
-    } catch (e: any) {
-      toast.error("Gagal memperbarui produk", { description: e.message });
+    } catch {
+      toast.error("Gagal memperbarui produk");
     } finally {
       setSaving(false);
     }

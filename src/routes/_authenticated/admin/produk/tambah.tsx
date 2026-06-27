@@ -3,6 +3,7 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, X } from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
 import { adminCreateProduct, adminListCategories } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/produk/tambah")({
@@ -94,7 +95,7 @@ function TambahProdukPage() {
         price: Number(form.price),
         discount_price: form.discount_price ? Number(form.discount_price) : null,
         weight_gram: Number(form.weight_gram),
-        status: form.status as any,
+        status: form.status as Database["public"]["Enums"]["product_status"],
         seo_title: form.seo_title || null,
         seo_description: form.seo_description || null,
         images: images.map((img, i) => ({ url: img.url, alt: img.alt || null, sort_order: i })),
@@ -107,8 +108,8 @@ function TambahProdukPage() {
       });
       toast.success("Produk berhasil dibuat");
       navigate({ to: "/admin/produk" });
-    } catch (e: any) {
-      toast.error("Gagal membuat produk", { description: e.message });
+    } catch {
+      toast.error("Gagal membuat produk");
     } finally {
       setSaving(false);
     }

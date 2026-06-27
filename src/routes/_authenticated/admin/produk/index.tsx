@@ -34,8 +34,8 @@ function ProductListPage() {
       await adminDeleteProduct({ id });
       toast.success(`Produk "${name}" berhasil dihapus`);
       refetch();
-    } catch (e: any) {
-      toast.error("Gagal menghapus produk", { description: e.message });
+    } catch {
+      toast.error("Gagal menghapus produk");
     }
   }
 
