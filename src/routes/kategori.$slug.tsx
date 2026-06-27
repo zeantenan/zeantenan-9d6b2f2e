@@ -3,6 +3,7 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ProductCard } from "./index";
 import { listProducts } from "@/lib/products.functions";
+import type { ProductListItem } from "@/lib/types";
 
 const qo = (slug: string) =>
   queryOptions({
@@ -45,7 +46,7 @@ function CatPage() {
           </div>
         ) : (
           <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
-            {products.map((p: any) => (
+            {products.map((p: ProductListItem) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>

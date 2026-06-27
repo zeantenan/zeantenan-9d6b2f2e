@@ -135,7 +135,7 @@ function ProductDetailPage() {
             </div>
             {images.length > 1 && (
               <div className="mt-3 grid grid-cols-5 gap-2">
-                {images.map((img, i: number) => (
+                {images.map((img, i) => (
                   <button
                     key={img.url}
                     onClick={() => setActiveImg(i)}
@@ -177,7 +177,7 @@ function ProductDetailPage() {
                   Pilih Varian
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {variants.map((v: any) => {
+                  {variants.map((v) => {
                     const label =
                       [v.size, v.color].filter(Boolean).join(" / ") || v.sku || "Varian";
                     const out = v.stock <= 0;
@@ -270,7 +270,7 @@ function ProductDetailPage() {
               <h2 className="mt-2 font-display text-2xl text-foreground">Anda mungkin juga suka</h2>
             </div>
             <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-4">
-              {related.map((p: any) => (
+              {related.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>

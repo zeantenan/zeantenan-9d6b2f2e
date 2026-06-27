@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getCart, updateCartItem, removeCartItem, updateCartMeta } from "@/lib/cart.functions";
 import { formatIDR } from "@/lib/format";
 import { publicMediaUrl } from "@/lib/storage";
+import type { CartItem } from "@/lib/types";
 
 const cartQO = queryOptions({ queryKey: ["cart"], queryFn: () => getCart() });
 
@@ -48,8 +49,8 @@ function CartPage() {
     onSuccess: () => toast.success("Catatan tersimpan"),
   });
 
-  const items = data.items ?? [];
-  const subtotal = items.reduce((acc: number, it: any) => {
+  const items = (data.items ?? []) as CartItem[];
+  const subtotal = items.reduce((acc, it) => {
     const price = Number(
       it.product_variants?.price_override ?? it.products?.discount_price ?? it.products?.price ?? 0,
     );

@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { listProducts } from "@/lib/products.functions";
+import type { ProductListItem } from "@/lib/types";
 
 const qo = (sort: string, q: string) =>
   queryOptions({
     queryKey: ["catalog", sort, q],
-    queryFn: () => listProducts({ data: { sort: sort as any, q: q || undefined, limit: 48 } }),
+    queryFn: () => listProducts({ data: { sort: sort as "newest" | "price_asc" | "price_desc", q: q || undefined, limit: 48 } }),
   });
 
 export const Route = createFileRoute("/produk/")({
@@ -82,7 +83,7 @@ function CatalogPage() {
           </div>
         ) : (
           <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
-            {products.map((p: any) => (
+            {products.map((p: ProductListItem) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>

@@ -5,6 +5,7 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "./index";
 import { listProducts } from "@/lib/products.functions";
+import type { ProductListItem } from "@/lib/types";
 
 export const Route = createFileRoute("/cari")({
   head: () => ({
@@ -47,7 +48,7 @@ function SearchPage() {
         </div>
         {data && data.length > 0 && (
           <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
-            {data.map((p: any) => (
+            {data.map((p: ProductListItem) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
