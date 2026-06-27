@@ -72,10 +72,10 @@ function CartPage() {
       ) : (
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="divide-y divide-border border-y border-border">
-            {items.map((it: any) => {
+            {items.map((it) => {
               const img = (it.products?.product_images ?? [])
                 .slice()
-                .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]?.url;
+                .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]?.url;
               const price = Number(
                 it.product_variants?.price_override ??
                   it.products?.discount_price ??

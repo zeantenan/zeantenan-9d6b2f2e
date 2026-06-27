@@ -23,6 +23,7 @@ import { getCart } from "@/lib/cart.functions";
 import { listAddresses } from "@/lib/account.functions";
 import { placeOrder } from "@/lib/orders.functions";
 import { formatIDR } from "@/lib/format";
+import type { CartItem, Address } from "@/lib/types";
 
 const cartQO = queryOptions({ queryKey: ["cart"], queryFn: () => getCart() });
 const addrQO = queryOptions({ queryKey: ["addresses"], queryFn: () => listAddresses() });
@@ -76,15 +77,15 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const place = useServerFn(placeOrder);
 
-  const items = cart.items ?? [];
-  const subtotal = items.reduce((acc: number, it: any) => {
+  const items = (cart.items ?? []) as CartItem[];
+  const subtotal = items.reduce((acc, it) => {
     const price = Number(
       it.product_variants?.price_override ?? it.products?.discount_price ?? it.products?.price ?? 0,
     );
     return acc + price * it.quantity;
   }, 0);
 
-  const defaultAddr = addresses.find((a: any) => a.is_default) ?? addresses[0];
+  const defaultAddr = (addresses as Address[]).find((a) => a.is_default) ?? (addresses as Address[])[0];
   const [usingAddrId, setUsingAddrId] = useState<string | null>(defaultAddr?.id ?? null);
 
   const form = useForm<z.infer<typeof schema>>({
