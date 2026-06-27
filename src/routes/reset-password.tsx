@@ -14,7 +14,11 @@ export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
       { title: "Atur Ulang Password — ZEAN TENAN" },
-      { name: "description", content: "Buat password baru untuk akun ZEAN TENAN Anda dan kembali berbelanja gamis & daster original dari Pekalongan." },
+      {
+        name: "description",
+        content:
+          "Buat password baru untuk akun ZEAN TENAN Anda dan kembali berbelanja gamis & daster original dari Pekalongan.",
+      },
       { property: "og:title", content: "Atur Ulang Password — ZEAN TENAN" },
       { property: "og:description", content: "Atur ulang password akun ZEAN TENAN Anda." },
     ],
@@ -27,7 +31,10 @@ const schema = z
     password: z.string().min(8, "Minimal 8 karakter").max(72),
     confirm: z.string(),
   })
-  .refine((d) => d.password === d.confirm, { path: ["confirm"], message: "Konfirmasi tidak cocok" });
+  .refine((d) => d.password === d.confirm, {
+    path: ["confirm"],
+    message: "Konfirmasi tidak cocok",
+  });
 
 function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -38,11 +45,16 @@ function ResetPasswordPage() {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") setReady(true);
     });
-    supabase.auth.getSession().then(({ data }) => { if (data.session) setReady(true); });
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) setReady(true);
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  const form = useForm({ resolver: zodResolver(schema), defaultValues: { password: "", confirm: "" } });
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: { password: "", confirm: "" },
+  });
 
   async function onSubmit(values: z.infer<typeof schema>) {
     const { error } = await supabase.auth.updateUser({ password: values.password });
@@ -58,25 +70,42 @@ function ResetPasswordPage() {
         <h1 className="mt-3 font-display text-3xl text-foreground">Atur ulang password</h1>
         {!ready ? (
           <p className="mt-6 text-sm text-muted-foreground">
-            Tautan reset sedang diverifikasi… Bila Anda tidak masuk dari email reset, silakan klik kembali tautan dari email Anda.
+            Tautan reset sedang diverifikasi… Bila Anda tidak masuk dari email reset, silakan klik
+            kembali tautan dari email Anda.
           </p>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-4">
             <div>
               <Label htmlFor="np">Password baru</Label>
-              <Input id="np" type="password" className="rounded-none" {...form.register("password")} />
+              <Input
+                id="np"
+                type="password"
+                className="rounded-none"
+                {...form.register("password")}
+              />
               {form.formState.errors.password && (
-                <p className="mt-1 text-xs text-destructive">{form.formState.errors.password.message}</p>
+                <p className="mt-1 text-xs text-destructive">
+                  {form.formState.errors.password.message}
+                </p>
               )}
             </div>
             <div>
               <Label htmlFor="cp">Konfirmasi password baru</Label>
-              <Input id="cp" type="password" className="rounded-none" {...form.register("confirm")} />
+              <Input
+                id="cp"
+                type="password"
+                className="rounded-none"
+                {...form.register("confirm")}
+              />
               {form.formState.errors.confirm && (
-                <p className="mt-1 text-xs text-destructive">{form.formState.errors.confirm.message}</p>
+                <p className="mt-1 text-xs text-destructive">
+                  {form.formState.errors.confirm.message}
+                </p>
               )}
             </div>
-            <Button type="submit" className="w-full rounded-none">Simpan Password</Button>
+            <Button type="submit" className="w-full rounded-none">
+              Simpan Password
+            </Button>
           </form>
         )}
       </div>
