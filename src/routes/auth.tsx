@@ -10,13 +10,14 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Masuk atau Daftar — ZEAN TENAN" },
-      { name: "description", content: "Masuk ke akun ZEAN TENAN Anda atau daftar untuk mulai berbelanja gamis dan daster original." },
+      { name: "description", content: "Masuk ke akun ZEAN TENAN Anda atau daftar untuk mulai berbelanja gamis dan daster original dari Kota Batik Indonesia." },
+      { property: "og:title", content: "Masuk atau Daftar — ZEAN TENAN" },
+      { property: "og:description", content: "Masuk ke akun Anda untuk pengalaman belanja gamis & daster original yang lebih personal." },
     ],
   }),
   component: AuthPage,
@@ -89,14 +90,9 @@ function AuthPage() {
 
   async function onGoogle() {
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) {
-      setLoading(false);
-      toast.error("Gagal masuk dengan Google", { description: String(result.error?.message ?? result.error) });
-      return;
-    }
-    if (result.redirected) return;
-    navigate({ to: "/akun" });
+    const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } });
+    setLoading(false);
+    if (error) return toast.error("Gagal masuk dengan Google", { description: error.message });
   }
 
   return (

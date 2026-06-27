@@ -9,7 +9,10 @@ const pQO = queryOptions({ queryKey: ["profile"], queryFn: () => getProfile() })
 const oQO = queryOptions({ queryKey: ["orders"], queryFn: () => listOrders() });
 
 export const Route = createFileRoute("/_authenticated/akun/")({
-  head: () => ({ meta: [{ title: "Dasbor Akun — ZEAN TENAN" }] }),
+  head: () => ({ meta: [
+    { title: "Dasbor Akun — ZEAN TENAN" },
+    { name: "description", content: "Kelola akun, pantau pesanan, dan simpan alamat untuk pengalaman belanja gamis & daster original yang lebih nyaman." },
+  ] }),
   component: AkunPage,
 });
 

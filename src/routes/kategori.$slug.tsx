@@ -13,8 +13,10 @@ const qo = (slug: string) =>
 export const Route = createFileRoute("/kategori/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `Kategori ${params.slug} — ZEAN TENAN` },
-      { name: "description", content: `Koleksi kategori ${params.slug} dari ZEAN TENAN.` },
+      { title: `Kategori ${params.slug.replace(/-/g, " ")} — ZEAN TENAN` },
+      { name: "description", content: `Koleksi ${params.slug.replace(/-/g, " ")} original ZEAN TENAN dari Kota Batik Indonesia. Gamis dan daster premium langsung dari Pekalongan.` },
+      { property: "og:title", content: `Kategori ${params.slug.replace(/-/g, " ")} — ZEAN TENAN` },
+      { property: "og:description", content: `Koleksi ${params.slug.replace(/-/g, " ")} original dari Pekalongan.` },
     ],
   }),
   loader: ({ params, context }) => context.queryClient.ensureQueryData(qo(params.slug)),

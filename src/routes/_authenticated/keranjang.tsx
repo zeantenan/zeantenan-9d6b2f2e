@@ -14,7 +14,10 @@ import { publicMediaUrl } from "@/lib/storage";
 const cartQO = queryOptions({ queryKey: ["cart"], queryFn: () => getCart() });
 
 export const Route = createFileRoute("/_authenticated/keranjang")({
-  head: () => ({ meta: [{ title: "Keranjang — ZEAN TENAN" }] }),
+  head: () => ({ meta: [
+    { title: "Keranjang Belanja — ZEAN TENAN" },
+    { name: "description", content: "Periksa keranjang belanja gamis dan daster original ZEAN TENAN Anda sebelum checkout." },
+  ] }),
   component: CartPage,
 });
 

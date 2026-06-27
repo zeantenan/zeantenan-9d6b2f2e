@@ -10,7 +10,9 @@ export const Route = createFileRoute("/cari")({
   head: () => ({
     meta: [
       { title: "Cari Produk — ZEAN TENAN" },
-      { name: "description", content: "Temukan gamis dan daster favorit Anda." },
+      { name: "description", content: "Temukan gamis dan daster favorit Anda dari koleksi original ZEAN TENAN, langsung dari Kota Batik Indonesia." },
+      { property: "og:title", content: "Cari Produk — ZEAN TENAN" },
+      { property: "og:description", content: "Temukan gamis dan daster original dari Pekalongan." },
     ],
   }),
   component: SearchPage,

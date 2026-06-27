@@ -15,7 +15,10 @@ const schema = z.object({
 }).refine((v) => v.password === v.confirm, { path: ["confirm"], message: "Konfirmasi tidak cocok" });
 
 export const Route = createFileRoute("/_authenticated/akun/password")({
-  head: () => ({ meta: [{ title: "Ubah Password — ZEAN TENAN" }] }),
+  head: () => ({ meta: [
+    { title: "Ubah Password — ZEAN TENAN" },
+    { name: "description", content: "Perbarui password akun ZEAN TENAN Anda secara berkala untuk keamanan." },
+  ] }),
   component: PassPage,
 });
 

@@ -51,7 +51,10 @@ const schema = z.object({
 });
 
 export const Route = createFileRoute("/_authenticated/checkout")({
-  head: () => ({ meta: [{ title: "Checkout — ZEAN TENAN" }] }),
+  head: () => ({ meta: [
+    { title: "Checkout — ZEAN TENAN" },
+    { name: "description", content: "Selesaikan pesanan gamis dan daster original ZEAN TENAN Anda. Pembayaran via transfer bank." },
+  ] }),
   component: CheckoutPage,
 });
 

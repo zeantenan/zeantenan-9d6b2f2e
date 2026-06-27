@@ -18,7 +18,10 @@ export const Route = createFileRoute("/_authenticated/pesanan/$orderNumber")({
     const r = await context.queryClient.ensureQueryData(qo(params.orderNumber));
     if (!r) throw notFound();
   },
-  head: ({ params }) => ({ meta: [{ title: `Pesanan ${params.orderNumber} — ZEAN TENAN` }] }),
+  head: ({ params }) => ({ meta: [
+    { title: `Pesanan ${params.orderNumber} — ZEAN TENAN` },
+    { name: "description", content: `Detail pesanan ${params.orderNumber} — pantau status pengiriman gamis dan daster original ZEAN TENAN.` },
+  ] }),
   notFoundComponent: () => (
     <AccountLayout title="Pesanan tidak ditemukan">
       <p className="text-sm text-muted-foreground">Pesanan tidak ditemukan atau bukan milik akun Anda.</p>

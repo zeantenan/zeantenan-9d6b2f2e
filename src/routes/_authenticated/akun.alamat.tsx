@@ -31,7 +31,10 @@ const schema = z.object({
 });
 
 export const Route = createFileRoute("/_authenticated/akun/alamat")({
-  head: () => ({ meta: [{ title: "Buku Alamat — ZEAN TENAN" }] }),
+  head: () => ({ meta: [
+    { title: "Buku Alamat — ZEAN TENAN" },
+    { name: "description", content: "Kelola buku alamat untuk checkout gamis dan daster original ZEAN TENAN yang lebih cepat." },
+  ] }),
   component: AlamatPage,
 });
 

@@ -17,9 +17,9 @@ export const Route = createFileRoute("/produk/")({
   head: () => ({
     meta: [
       { title: "Katalog Produk — ZEAN TENAN" },
-      { name: "description", content: "Jelajahi seluruh koleksi gamis dan daster original ZEAN TENAN dari Kota Batik Indonesia." },
+      { name: "description", content: "Jelajahi seluruh koleksi gamis dan daster original ZEAN TENAN dari Kota Batik Indonesia. Kualitas premium, motif batik khas Pekalongan." },
       { property: "og:title", content: "Katalog Produk — ZEAN TENAN" },
-      { property: "og:description", content: "Koleksi gamis & daster original dari Pekalongan." },
+      { property: "og:description", content: "Koleksi gamis & daster original dari Pekalongan. Langsung dari pengrajin Kota Batik Indonesia." },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(qo("newest", "")),

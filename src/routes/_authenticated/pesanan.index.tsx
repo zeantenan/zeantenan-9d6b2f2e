@@ -7,7 +7,10 @@ import { formatIDR, formatDateID, ORDER_STATUS_LABEL } from "@/lib/format";
 const qo = queryOptions({ queryKey: ["orders"], queryFn: () => listOrders() });
 
 export const Route = createFileRoute("/_authenticated/pesanan/")({
-  head: () => ({ meta: [{ title: "Riwayat Pesanan — ZEAN TENAN" }] }),
+  head: () => ({ meta: [
+    { title: "Riwayat Pesanan — ZEAN TENAN" },
+    { name: "description", content: "Pantau semua pesanan gamis dan daster original ZEAN TENAN Anda di satu tempat." },
+  ] }),
   component: OrdersPage,
 });
 

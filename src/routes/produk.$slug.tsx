@@ -26,8 +26,10 @@ export const Route = createFileRoute("/produk/$slug")({
   },
   head: ({ params }) => ({
     meta: [
-      { title: `${params.slug} — ZEAN TENAN` },
-      { property: "og:title", content: `${params.slug} — ZEAN TENAN` },
+      { title: `${params.slug.replace(/-/g, " ")} — ZEAN TENAN` },
+      { name: "description", content: `Belanja ${params.slug.replace(/-/g, " ")} original dari Pekalongan. Kualitas premium, motif batik khas Kota Batik Indonesia.` },
+      { property: "og:title", content: `${params.slug.replace(/-/g, " ")} — ZEAN TENAN` },
+      { property: "og:description", content: `${params.slug.replace(/-/g, " ")} original ZEAN TENAN — langsung dari pengrajin Pekalongan.` },
     ],
   }),
   notFoundComponent: () => (

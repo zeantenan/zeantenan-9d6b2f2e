@@ -10,7 +10,6 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -39,9 +38,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -87,8 +83,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#7B1E3A" },
       { name: "twitter:title", content: "ZEAN TENAN — Original Gamis & Daster dari Kota Batik Indonesia" },
       { name: "twitter:description", content: "Belanja gamis dan daster original dari Pekalongan. Kualitas premium, motif batik khas, langsung dari pengrajin Kota Batik Indonesia." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c053cb3d-4b99-451e-a50b-c2045312098a/id-preview-159c2cf5--33812ec1-4018-4859-be17-66244028a611.lovable.app-1782564825789.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c053cb3d-4b99-451e-a50b-c2045312098a/id-preview-159c2cf5--33812ec1-4018-4859-be17-66244028a611.lovable.app-1782564825789.png" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/og-zeantenan.jpg" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/og-zeantenan.jpg" },
     ],
     links: [
       {

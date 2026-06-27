@@ -19,7 +19,10 @@ const schema = z.object({
 });
 
 export const Route = createFileRoute("/_authenticated/akun/profil")({
-  head: () => ({ meta: [{ title: "Profil — ZEAN TENAN" }] }),
+  head: () => ({ meta: [
+    { title: "Profil — ZEAN TENAN" },
+    { name: "description", content: "Kelola informasi pribadi akun ZEAN TENAN Anda." },
+  ] }),
   component: ProfilPage,
 });
 

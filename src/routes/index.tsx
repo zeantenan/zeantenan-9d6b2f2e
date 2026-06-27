@@ -20,9 +20,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "ZEAN TENAN — Original Gamis & Daster dari Kota Batik Indonesia" },
-      { name: "description", content: "Belanja gamis dan daster original dari Pekalongan. Kualitas premium, motif batik khas Kota Batik Indonesia." },
-      { property: "og:title", content: "ZEAN TENAN — Original Gamis & Daster" },
-      { property: "og:description", content: "Original Gamis & Daster dari Kota Batik Indonesia." },
+      { name: "description", content: "Belanja gamis dan daster original dari Pekalongan. Kualitas premium, motif batik khas, langsung dari pengrajin Kota Batik Indonesia." },
+      { property: "og:title", content: "ZEAN TENAN — Original Gamis & Daster dari Kota Batik Indonesia" },
+      { property: "og:description", content: "Original Gamis & Daster dari Kota Batik Indonesia. Kualitas premium, motif batik khas Pekalongan." },
     ],
   }),
   loader: ({ context }) => {

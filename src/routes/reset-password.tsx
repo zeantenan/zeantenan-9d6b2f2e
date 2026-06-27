@@ -14,7 +14,9 @@ export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
       { title: "Atur Ulang Password — ZEAN TENAN" },
-      { name: "description", content: "Buat password baru untuk akun ZEAN TENAN Anda." },
+      { name: "description", content: "Buat password baru untuk akun ZEAN TENAN Anda dan kembali berbelanja gamis & daster original dari Pekalongan." },
+      { property: "og:title", content: "Atur Ulang Password — ZEAN TENAN" },
+      { property: "og:description", content: "Atur ulang password akun ZEAN TENAN Anda." },
     ],
   }),
   component: ResetPasswordPage,

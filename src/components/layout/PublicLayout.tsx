@@ -99,8 +99,9 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           <div>
             <Logo />
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-              Original Gamis &amp; Daster dari Kota Batik Indonesia. Dirajut dengan
-              ketelitian, dikirim langsung dari Pekalongan.
+              Original Gamis &amp; Daster dari Kota Batik Indonesia. Setiap helai
+              dikerjakan dengan ketelitian pengrajin Pekalongan, dikirim langsung
+              dari sentra batik ke rumah Anda.
             </p>
           </div>
           <FooterCol title="Belanja" items={[
