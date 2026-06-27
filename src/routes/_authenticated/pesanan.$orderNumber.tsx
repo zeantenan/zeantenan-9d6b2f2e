@@ -121,7 +121,7 @@ function OrderDetailPage() {
             <ol className="mt-4 space-y-3">
               {ORDER_STATUS_FLOW.map((s, i) => {
                 const reached =
-                  ORDER_STATUS_FLOW.indexOf(order.status as any) >= i || order.status === "selesai";
+                  ORDER_STATUS_FLOW.indexOf(order.status as (typeof ORDER_STATUS_FLOW)[number]) >= i || order.status === "selesai";
                 return (
                   <li key={s} className="flex items-center gap-3 text-sm">
                     <span
@@ -154,7 +154,7 @@ function OrderDetailPage() {
               <h3 className="font-display text-lg">Item Pesanan</h3>
             </div>
             <ul className="divide-y divide-border">
-              {items.map((it: any) => (
+              {items.map((it) => (
                 <li key={it.id} className="flex justify-between gap-4 p-6 text-sm">
                   <div>
                     <p className="font-medium text-foreground">{it.product_name}</p>
@@ -246,7 +246,7 @@ function OrderDetailPage() {
             <section className="border border-border p-6">
               <h3 className="font-display text-lg">Riwayat</h3>
               <ol className="mt-3 space-y-2 text-xs text-muted-foreground">
-                {history.map((h: any) => (
+                {history.map((h) => (
                   <li key={h.id} className="flex justify-between gap-4">
                     <span>
                       {ORDER_STATUS_LABEL[h.status]} — {h.notes ?? ""}
