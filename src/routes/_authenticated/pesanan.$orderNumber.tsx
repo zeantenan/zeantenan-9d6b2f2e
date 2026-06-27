@@ -121,7 +121,8 @@ function OrderDetailPage() {
             <ol className="mt-4 space-y-3">
               {ORDER_STATUS_FLOW.map((s, i) => {
                 const reached =
-                  ORDER_STATUS_FLOW.indexOf(order.status as (typeof ORDER_STATUS_FLOW)[number]) >= i || order.status === "selesai";
+                  ORDER_STATUS_FLOW.indexOf(order.status as (typeof ORDER_STATUS_FLOW)[number]) >=
+                    i || order.status === "selesai";
                 return (
                   <li key={s} className="flex items-center gap-3 text-sm">
                     <span

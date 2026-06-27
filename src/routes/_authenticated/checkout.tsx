@@ -85,7 +85,8 @@ function CheckoutPage() {
     return acc + price * it.quantity;
   }, 0);
 
-  const defaultAddr = (addresses as Address[]).find((a) => a.is_default) ?? (addresses as Address[])[0];
+  const defaultAddr =
+    (addresses as Address[]).find((a) => a.is_default) ?? (addresses as Address[])[0];
   const [usingAddrId, setUsingAddrId] = useState<string | null>(defaultAddr?.id ?? null);
 
   const form = useForm<z.infer<typeof schema>>({

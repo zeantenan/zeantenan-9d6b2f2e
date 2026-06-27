@@ -11,7 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { supabase } from "@/integrations/supabase/client";
 
-const GOOGLE_CLIENT_ID = "1016487992569-j3q50d8fklerq75tan9s11btdtbna69o.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID =
+  "1016487992569-j3q50d8fklerq75tan9s11btdtbna69o.apps.googleusercontent.com";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -120,7 +121,9 @@ function AuthPage() {
 
     if (!(window as any).google?.accounts?.oauth2) {
       setLoading(false);
-      return toast.error("Google Sign-In tidak tersedia", { description: "Muat ulang halaman atau coba metode lain." });
+      return toast.error("Google Sign-In tidak tersedia", {
+        description: "Muat ulang halaman atau coba metode lain.",
+      });
     }
 
     try {

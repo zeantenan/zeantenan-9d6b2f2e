@@ -67,14 +67,12 @@ export const addToCart = createServerFn({ method: "POST" })
         .eq("id", dup.id);
       if (error) throw new Error(error.message);
     } else {
-      const { error } = await supabase
-        .from("cart_items")
-        .insert({
-          cart_id: cartId,
-          product_id: data.productId,
-          variant_id: variantId,
-          quantity: qty,
-        });
+      const { error } = await supabase.from("cart_items").insert({
+        cart_id: cartId,
+        product_id: data.productId,
+        variant_id: variantId,
+        quantity: qty,
+      });
       if (error) throw new Error(error.message);
     }
     return { ok: true };

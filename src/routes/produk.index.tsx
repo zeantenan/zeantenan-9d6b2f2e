@@ -17,7 +17,10 @@ import type { ProductListItem } from "@/lib/types";
 const qo = (sort: string, q: string) =>
   queryOptions({
     queryKey: ["catalog", sort, q],
-    queryFn: () => listProducts({ data: { sort: sort as "newest" | "price_asc" | "price_desc", q: q || undefined, limit: 48 } }),
+    queryFn: () =>
+      listProducts({
+        data: { sort: sort as "newest" | "price_asc" | "price_desc", q: q || undefined, limit: 48 },
+      }),
   });
 
 export const Route = createFileRoute("/produk/")({
