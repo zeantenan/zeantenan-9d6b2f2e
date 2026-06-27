@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { listProducts, listCategories } from "@/lib/products.functions";
 import { formatIDR } from "@/lib/format";
 import { publicMediaUrl } from "@/lib/storage";
+import type { ProductListItem, Category } from "@/lib/types";
 
 const productsQO = queryOptions({
   queryKey: ["home", "products"],
@@ -141,7 +142,7 @@ function HomePage() {
             </div>
           ) : (
             <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
-              {products.map((p: any) => (
+              {products.map((p: ProductListItem) => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>
@@ -213,10 +214,10 @@ function Promise({ n, title, body }: { n: string; title: string; body: string })
   );
 }
 
-export function ProductCard({ product }: { product: any }) {
+export function ProductCard({ product }: { product: ProductListItem }) {
   const image = (product.product_images ?? [])
     .slice()
-    .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]?.url;
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]?.url;
   const hasDiscount =
     product.discount_price &&
     Number(product.discount_price) > 0 &&

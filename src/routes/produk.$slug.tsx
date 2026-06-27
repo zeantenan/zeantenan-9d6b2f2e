@@ -12,6 +12,7 @@ import { addToCart } from "@/lib/cart.functions";
 import { formatIDR } from "@/lib/format";
 import { publicMediaUrl } from "@/lib/storage";
 import { supabase } from "@/integrations/supabase/client";
+import type { ProductDetail, ProductVariant, ProductImage, RelatedProduct } from "@/lib/types";
 
 const qo = (slug: string) =>
   queryOptions({
@@ -62,18 +63,18 @@ export const Route = createFileRoute("/produk/$slug")({
 function ProductDetailPage() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(qo(slug));
-  const product: any = data!.product;
-  const related: any[] = data!.related;
+  const product = data!.product as ProductDetail;
+  const related = data!.related as RelatedProduct[];
   const navigate = useNavigate();
   const qc = useQueryClient();
 
   const images = (product.product_images ?? [])
     .slice()
-    .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
   const [activeImg, setActiveImg] = useState(0);
-  const variants = (product.product_variants ?? []).filter((v: any) => v.is_active);
+  const variants = (product.product_variants ?? []).filter((v) => v.is_active);
   const [variantId, setVariantId] = useState<string | null>(variants[0]?.id ?? null);
-  const variant = variants.find((v: any) => v.id === variantId);
+  const variant = variants.find((v) => v.id === variantId);
   const [qty, setQty] = useState(1);
 
   const hasDiscount =
@@ -89,7 +90,7 @@ function ProductDetailPage() {
       toast.success("Ditambahkan ke keranjang");
       qc.invalidateQueries({ queryKey: ["cart"] });
     },
-    onError: (e: any) => toast.error("Gagal", { description: e.message }),
+    onError: (e: Error) => toast.error("Gagal", { description: e.message }),
   });
 
   async function handleAdd(thenCheckout: boolean) {
@@ -134,7 +135,7 @@ function ProductDetailPage() {
             </div>
             {images.length > 1 && (
               <div className="mt-3 grid grid-cols-5 gap-2">
-                {images.map((img: any, i: number) => (
+                {images.map((img, i: number) => (
                   <button
                     key={img.url}
                     onClick={() => setActiveImg(i)}
