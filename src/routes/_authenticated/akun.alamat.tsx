@@ -158,7 +158,7 @@ function AlamatPage() {
       {showForm && (
         <form
           onSubmit={form.handleSubmit((v) =>
-            m.mutate({ data: { id: editing ?? undefined, data: v } as any }),
+            m.mutate({ data: { id: editing ?? undefined, data: v } }),
           )}
           className="mt-10 border border-border p-6"
         >

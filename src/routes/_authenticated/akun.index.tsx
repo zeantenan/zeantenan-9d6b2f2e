@@ -47,10 +47,6 @@ function AkunPage() {
           label="Selesai"
           value={String((orders as OrderListItem[]).filter((o) => o.status === "selesai").length)}
         />
-        <Stat
-          label="Selesai"
-          value={String(orders.filter((o: any) => o.status === "selesai").length)}
-        />
       </div>
 
       <div className="mt-10">

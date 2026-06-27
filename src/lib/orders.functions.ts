@@ -42,7 +42,12 @@ export const placeOrder = createServerFn({ method: "POST" })
     if (!items || items.length === 0) throw new Error("Keranjang Anda kosong.");
 
     let subtotal = 0;
-    const orderItems = items.map((it: any) => {
+    type CartItemRow = {
+      id: string; quantity: number; product_id: string; variant_id: string | null;
+      products: { name: string; price: number; discount_price: number | null; product_images: { url: string; sort_order: number }[] } | null;
+      product_variants: { size: string | null; color: string | null; price_override: number | null; stock: number } | null;
+    };
+    const orderItems = (items as CartItemRow[]).map((it) => {
       const unit = Number(
         it.product_variants?.price_override ??
           it.products?.discount_price ??
@@ -56,7 +61,7 @@ export const placeOrder = createServerFn({ method: "POST" })
       const image =
         (it.products?.product_images ?? [])
           .slice()
-          .sort((a: any, b: any) => a.sort_order - b.sort_order)[0]?.url ?? null;
+          .sort((a, b) => a.sort_order - b.sort_order)[0]?.url ?? null;
       return {
         product_id: it.product_id,
         variant_id: it.variant_id,

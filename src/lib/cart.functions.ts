@@ -1,8 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-async function ensureCart(supabase: any, userId: string): Promise<string> {
+async function ensureCart(supabase: SupabaseClient<Database>, userId: string): Promise<string> {
   const { data } = await supabase.from("carts").select("id").eq("user_id", userId).maybeSingle();
   if (data) return data.id;
   const { data: c, error } = await supabase
@@ -57,7 +59,7 @@ export const addToCart = createServerFn({ method: "POST" })
       .eq("cart_id", cartId)
       .eq("product_id", data.productId);
     const dup = (dupRows ?? []).find(
-      (r: any) => (r.variant_id ?? null) === variantId || (!r.variant_id && !variantId),
+      (r: { variant_id: string | null }) => (r.variant_id ?? null) === variantId || (!r.variant_id && !variantId),
     );
 
     if (dup) {

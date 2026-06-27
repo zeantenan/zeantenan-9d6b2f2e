@@ -58,7 +58,7 @@ const addressSchema = z.object({
 
 export const upsertAddress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: any) =>
+  .inputValidator((d: unknown) =>
     z.object({ id: z.string().uuid().optional(), data: addressSchema }).parse(d),
   )
   .handler(async ({ data, context }) => {

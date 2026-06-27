@@ -11,6 +11,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { supabase } from "@/integrations/supabase/client";
 
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        oauth2: {
+          initTokenClient: (config: {
+            client_id: string;
+            scope: string;
+            callback: (response: { error?: string; access_token?: string }) => void;
+          }) => { requestAccessToken: () => void };
+        };
+      };
+    };
+  }
+}
+
 const GOOGLE_CLIENT_ID =
   "1016487992569-j3q50d8fklerq75tan9s11btdtbna69o.apps.googleusercontent.com";
 
@@ -59,7 +75,7 @@ function AuthPage() {
   }, [navigate]);
 
   useEffect(() => {
-    if ((window as any).google?.accounts) return;
+    if (window.google?.accounts) return;
     const s = document.createElement("script");
     s.src = "https://accounts.google.com/gsi/client";
     s.async = true;
