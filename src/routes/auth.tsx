@@ -108,7 +108,7 @@ function AuthPage() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.origin },
+      options: { redirectTo: window.location.origin + "/auth" },
     });
     setLoading(false);
     if (error) return toast.error("Gagal masuk dengan Google", { description: error.message });
