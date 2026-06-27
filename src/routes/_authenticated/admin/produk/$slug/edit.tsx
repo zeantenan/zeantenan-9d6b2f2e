@@ -85,15 +85,22 @@ function EditProdukPage() {
       seo_description: product.seo_description || "",
     });
     setImages(
-      (product.product_images || []).map((img: Database["public"]["Tables"]["product_images"]["Row"]) => ({ url: img.url, alt: img.alt || "" })),
+      (product.product_images || []).map(
+        (img: Database["public"]["Tables"]["product_images"]["Row"]) => ({
+          url: img.url,
+          alt: img.alt || "",
+        }),
+      ),
     );
     setVariants(
-      (product.product_variants || []).map((v: Database["public"]["Tables"]["product_variants"]["Row"]) => ({
-        size: v.size || "",
-        color: v.color || "",
-        stock: String(v.stock ?? "0"),
-        price_override: v.price_override ? String(v.price_override) : "",
-      })),
+      (product.product_variants || []).map(
+        (v: Database["public"]["Tables"]["product_variants"]["Row"]) => ({
+          size: v.size || "",
+          color: v.color || "",
+          stock: String(v.stock ?? "0"),
+          price_override: v.price_override ? String(v.price_override) : "",
+        }),
+      ),
     );
   }, [product]);
 
