@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as CariRouteImport } from './routes/cari'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdukIndexRouteImport } from './routes/produk.index'
@@ -43,11 +42,6 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const CariRoute = CariRouteImport.update({
   id: '/cari',
   path: '/cari',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -169,7 +163,6 @@ const AuthenticatedAdminProdukSlugEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRouteWithChildren
   '/cari': typeof CariRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
@@ -221,7 +214,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRouteWithChildren
   '/cari': typeof CariRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
@@ -249,7 +241,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/auth'
     | '/cari'
     | '/reset-password'
     | '/admin'
@@ -300,7 +291,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/auth'
     | '/cari'
     | '/reset-password'
     | '/_authenticated/admin'
@@ -328,7 +318,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRouteWithChildren
   CariRoute: typeof CariRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   KategoriSlugRoute: typeof KategoriSlugRoute
@@ -350,13 +339,6 @@ declare module '@tanstack/react-router' {
       path: '/cari'
       fullPath: '/cari'
       preLoaderRoute: typeof CariRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -568,22 +550,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface AuthRouteChildren {
-  AuthCallbackRoute: typeof AuthCallbackRoute
-  AuthIndexRoute: typeof AuthIndexRoute
-}
-
-const AuthRouteChildren: AuthRouteChildren = {
-  AuthCallbackRoute: AuthCallbackRoute,
-  AuthIndexRoute: AuthIndexRoute,
-}
-
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRouteWithChildren,
   CariRoute: CariRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   KategoriSlugRoute: KategoriSlugRoute,
