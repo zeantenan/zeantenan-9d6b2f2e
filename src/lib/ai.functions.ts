@@ -13,12 +13,7 @@ Aturan:
 - Jangan menyebutkan harga
 - Fokus pada bahan, model, keunggulan, dan kesan yang diberikan`;
 
-function buildPrompt(
-  name: string,
-  slug: string,
-  categoryName: string | null,
-  imageUrls: string[],
-) {
+function buildPrompt(name: string, slug: string, categoryName: string | null, imageUrls: string[]) {
   return `Buatkan deskripsi untuk produk fashion muslim berikut:
 
 Nama Produk: ${name}
@@ -48,16 +43,23 @@ function parseResponse(text: string): { short_description: string; description: 
 }
 
 export const generateProductDescription = createServerFn({ method: "POST" })
-  .validator((d: { name: string; slug: string; categoryName?: string | null; imageUrls?: string[] }) => {
-    if (!d.name || !d.slug) throw new Error("Nama dan slug produk wajib diisi");
-    return d;
-  })
+  .validator(
+    (d: { name: string; slug: string; categoryName?: string | null; imageUrls?: string[] }) => {
+      if (!d.name || !d.slug) throw new Error("Nama dan slug produk wajib diisi");
+      return d;
+    },
+  )
   .handler(async ({ data }) => {
     if (!OPENAI_API_KEY) {
       return generateFallback(data.name, data.categoryName ?? null);
     }
 
-    const prompt = buildPrompt(data.name, data.slug, data.categoryName ?? null, data.imageUrls ?? []);
+    const prompt = buildPrompt(
+      data.name,
+      data.slug,
+      data.categoryName ?? null,
+      data.imageUrls ?? [],
+    );
 
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
