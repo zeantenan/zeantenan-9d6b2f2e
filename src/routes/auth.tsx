@@ -135,7 +135,7 @@ function AuthPage() {
   async function onGoogle() {
     setLoading(true);
 
-    if (!window.google?.accounts?.oauth2) {
+    if (!window.google?.accounts?.id) {
       setLoading(false);
       return toast.error("Google Sign-In tidak tersedia", {
         description: "Muat ulang halaman atau coba metode lain.",
@@ -143,17 +143,15 @@ function AuthPage() {
     }
 
     try {
-      const g = window.google.accounts.oauth2;
-      const client = g.initTokenClient({
+      window.google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
-        scope: "openid email profile",
         callback: async (res) => {
           if (res.error) {
             setLoading(false);
             toast.error("Gagal masuk dengan Google", { description: res.error });
             return;
           }
-          const token = res.id_token;
+          const token = res.credential;
           if (!token) {
             setLoading(false);
             toast.error("Tidak mendapatkan token dari Google");
@@ -165,7 +163,7 @@ function AuthPage() {
           navigate({ to: "/akun" });
         },
       });
-      client.requestAccessToken();
+      window.google.accounts.id.prompt();
     } catch (err) {
       setLoading(false);
       toast.error("Gagal masuk dengan Google", { description: String(err) });
