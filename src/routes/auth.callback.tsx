@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth/callback")({
+  ssr: false,
   head: () => ({
     meta: [{ title: "Memproses Masuk — ZEAN TENAN" }, { name: "robots", content: "noindex" }],
   }),
@@ -26,7 +27,7 @@ function CallbackPage() {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center">
         <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-        <p className="mt-4 text-sm text-muted-foreground">Memproses masuk…</p>
+        <p className="mt-4 text-sm text-muted-foreground">Memproses masuk...</p>
       </div>
     </div>
   );

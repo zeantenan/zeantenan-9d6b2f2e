@@ -106,20 +106,18 @@ function AuthPage() {
 
   async function onGoogle() {
     setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-      if (error) {
-        setLoading(false);
-        toast.error("Gagal masuk dengan Google", { description: error.message });
-      }
-    } catch (err) {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
       setLoading(false);
-      toast.error("Gagal masuk dengan Google", { description: String(err) });
+      toast.error(error.message, {
+        description:
+          "Gagal masuk dengan Google. Pastikan provider Google sudah diaktifkan di Supabase Dashboard.",
+      });
     }
   }
 
