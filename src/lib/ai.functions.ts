@@ -54,7 +54,7 @@ export const generateProductDescription = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     if (!OPENAI_API_KEY) {
-      return generateFallback(data.name, data.categoryName);
+      return generateFallback(data.name, data.categoryName ?? null);
     }
 
     const prompt = buildPrompt(data.name, data.slug, data.categoryName ?? null, data.imageUrls ?? []);
@@ -88,7 +88,7 @@ export const generateProductDescription = createServerFn({ method: "POST" })
     if (!res.ok) {
       const err = await res.text();
       console.error("OpenAI error:", err);
-      return generateFallback(data.name, data.categoryName);
+      return generateFallback(data.name, data.categoryName ?? null);
     }
 
     const json = await res.json();

@@ -18,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const NAV = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/produk", label: "Produk", icon: Package },
+  { to: "/admin/kategori", label: "Kategori", icon: Tags },
 ];
 
 function AdminLayout() {

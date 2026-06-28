@@ -131,6 +131,34 @@ function EditProdukPage() {
     setVariants((prev) => prev.filter((_, idx) => idx !== i));
   }
 
+  async function handleGenerate() {
+    if (!form.name.trim() || !form.slug.trim()) {
+      return toast.error("Isi nama dan slug produk terlebih dahulu");
+    }
+    setGenerating(true);
+    try {
+      const catName = categories.find((c) => c.id === form.category_id)?.name ?? null;
+      const result = await genFn({
+        data: {
+          name: form.name.trim(),
+          slug: form.slug.trim(),
+          categoryName: catName,
+          imageUrls: images.map((i) => i.url),
+        },
+      });
+      setForm((f) => ({
+        ...f,
+        short_description: result.short_description,
+        description: result.description,
+      }));
+      toast.success("Deskripsi berhasil dibuat");
+    } catch {
+      toast.error("Gagal membuat deskripsi");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name.trim()) return toast.error("Nama produk wajib diisi");
@@ -227,6 +255,18 @@ function EditProdukPage() {
                 <option value="archived">Archived</option>
               </select>
             </Field>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Deskripsi (AI)</span>
+            <button
+              type="button"
+              onClick={handleGenerate}
+              disabled={generating}
+              className="inline-flex items-center gap-1.5 rounded-none bg-gradient-to-r from-purple-600 to-pink-500 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 disabled:opacity-50"
+            >
+              <Sparkles className="h-3 w-3" />
+              {generating ? "Memproses..." : "Generate AI"}
+            </button>
           </div>
           <Field label="Deskripsi Singkat">
             <textarea
