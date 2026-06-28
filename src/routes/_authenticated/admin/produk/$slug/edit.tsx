@@ -2,9 +2,11 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Plus, X, ArrowLeft } from "lucide-react";
+import { Plus, X, ArrowLeft, Sparkles } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import type { Database } from "@/integrations/supabase/types";
 import { adminGetProduct, adminUpdateProduct, adminListCategories } from "@/lib/admin.functions";
+import { generateProductDescription } from "@/lib/ai.functions";
 import { formatIDR } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/admin/produk/$slug/edit")({
@@ -46,6 +48,8 @@ function EditProdukPage() {
   const { data: categories } = useSuspenseQuery(categoriesQO);
   const { data: product } = useSuspenseQuery(productQO(slug));
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const genFn = useServerFn(generateProductDescription);
 
   const [form, setForm] = useState({
     name: "",

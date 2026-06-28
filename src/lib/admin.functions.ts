@@ -190,6 +190,41 @@ export const adminListCategories = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
+export const adminUpdateCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        name: z.string().trim().min(1).max(100),
+        slug: z.string().trim().min(1).max(100),
+        description: z.string().max(500).optional().nullable(),
+        image_url: z.string().optional().nullable(),
+        sort_order: z.number().int().default(0),
+        is_active: z.boolean().default(true),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context);
+    const sb = await getAdmin();
+    const { id, ...fields } = data;
+    const { error } = await sb.from("categories").update(fields).eq("id", id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminDeleteCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context);
+    const sb = await getAdmin();
+    const { error } = await sb.from("categories").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const adminCreateCategory = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
