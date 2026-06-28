@@ -31,7 +31,7 @@ function ProductListPage() {
   async function handleDelete(id: string, name: string) {
     if (!confirm(`Hapus produk "${name}"?`)) return;
     try {
-      await adminDeleteProduct({ id });
+      await adminDeleteProduct({ data: { id } });
       toast.success(`Produk "${name}" berhasil dihapus`);
       refetch();
     } catch {

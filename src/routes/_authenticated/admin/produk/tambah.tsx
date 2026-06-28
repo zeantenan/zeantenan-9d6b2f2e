@@ -86,25 +86,27 @@ function TambahProdukPage() {
     setSaving(true);
     try {
       await adminCreateProduct({
-        name: form.name.trim(),
-        slug: form.slug.trim(),
-        category_id: form.category_id || null,
-        short_description: form.short_description || null,
-        description: form.description || null,
-        specification: form.specification || null,
-        price: Number(form.price),
-        discount_price: form.discount_price ? Number(form.discount_price) : null,
-        weight_gram: Number(form.weight_gram),
-        status: form.status as Database["public"]["Enums"]["product_status"],
-        seo_title: form.seo_title || null,
-        seo_description: form.seo_description || null,
-        images: images.map((img, i) => ({ url: img.url, alt: img.alt || null, sort_order: i })),
-        variants: variants.map((v) => ({
-          size: v.size || null,
-          color: v.color || null,
-          stock: Number(v.stock),
-          price_override: v.price_override ? Number(v.price_override) : null,
-        })),
+        data: {
+          name: form.name.trim(),
+          slug: form.slug.trim(),
+          category_id: form.category_id || null,
+          short_description: form.short_description || null,
+          description: form.description || null,
+          specification: form.specification || null,
+          price: Number(form.price),
+          discount_price: form.discount_price ? Number(form.discount_price) : null,
+          weight_gram: Number(form.weight_gram),
+          status: form.status as Database["public"]["Enums"]["product_status"],
+          seo_title: form.seo_title || null,
+          seo_description: form.seo_description || null,
+          images: images.map((img, i) => ({ url: img.url, alt: img.alt || null, sort_order: i })),
+          variants: variants.map((v) => ({
+            size: v.size || null,
+            color: v.color || null,
+            stock: Number(v.stock),
+            price_override: v.price_override ? Number(v.price_override) : null,
+          })),
+        },
       });
       toast.success("Produk berhasil dibuat");
       navigate({ to: "/admin/produk" });
