@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ import { getCart } from "@/lib/cart.functions";
 import { listAddresses } from "@/lib/account.functions";
 import { placeOrder } from "@/lib/orders.functions";
 import { formatIDR } from "@/lib/format";
+import { RegionSelects } from "@/components/region/RegionSelects";
 import type { CartItem, Address } from "@/lib/types";
 
 const cartQO = queryOptions({ queryKey: ["cart"], queryFn: () => getCart() });
@@ -174,6 +175,7 @@ function CheckoutPage() {
   return (
     <AccountLayout title="Checkout" description="Lengkapi alamat pengiriman dan pilih kurir Anda.">
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-10 lg:grid-cols-[1fr_340px]">
+        <FormProvider {...form}>
         <div className="space-y-10">
           {addresses.length > 0 && (
             <section>
@@ -207,21 +209,9 @@ function CheckoutPage() {
               <Field label="No. Telepon" error={form.formState.errors.recipient_phone?.message}>
                 <Input className="rounded-none" {...form.register("recipient_phone")} />
               </Field>
-              <Field label="Provinsi" error={form.formState.errors.province?.message}>
-                <Input className="rounded-none" {...form.register("province")} />
-              </Field>
-              <Field label="Kota / Kabupaten" error={form.formState.errors.city?.message}>
-                <Input className="rounded-none" {...form.register("city")} />
-              </Field>
-              <Field label="Kecamatan" error={form.formState.errors.district?.message}>
-                <Input className="rounded-none" {...form.register("district")} />
-              </Field>
-              <Field label="Kelurahan / Desa">
-                <Input className="rounded-none" {...form.register("village")} />
-              </Field>
-              <Field label="Kode Pos" error={form.formState.errors.postal_code?.message}>
-                <Input className="rounded-none" {...form.register("postal_code")} />
-              </Field>
+              <div className="sm:col-span-2">
+                <RegionSelects />
+              </div>
             </div>
             <Field
               label="Alamat Lengkap"
@@ -338,6 +328,7 @@ function CheckoutPage() {
             Buat Pesanan
           </Button>
         </aside>
+        </FormProvider>
       </form>
     </AccountLayout>
   );

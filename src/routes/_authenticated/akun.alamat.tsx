@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RegionSelects } from "@/components/region/RegionSelects";
 import { listAddresses, upsertAddress, deleteAddress } from "@/lib/account.functions";
 import type { Address } from "@/lib/types";
 
@@ -162,6 +163,7 @@ function AlamatPage() {
           )}
           className="mt-10 border border-border p-6"
         >
+          <FormProvider {...form}>
           <h3 className="font-display text-lg">{editing ? "Ubah Alamat" : "Alamat Baru"}</h3>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Field label="Label (mis. Rumah, Kantor)">
@@ -173,22 +175,8 @@ function AlamatPage() {
             <Field label="No. Telepon" error={form.formState.errors.phone?.message}>
               <Input className="rounded-none" {...form.register("phone")} />
             </Field>
-            <Field label="Provinsi" error={form.formState.errors.province?.message}>
-              <Input className="rounded-none" {...form.register("province")} />
-            </Field>
-            <Field label="Kota/Kabupaten" error={form.formState.errors.city?.message}>
-              <Input className="rounded-none" {...form.register("city")} />
-            </Field>
-            <Field label="Kecamatan" error={form.formState.errors.district?.message}>
-              <Input className="rounded-none" {...form.register("district")} />
-            </Field>
-            <Field label="Kelurahan">
-              <Input className="rounded-none" {...form.register("village")} />
-            </Field>
-            <Field label="Kode Pos" error={form.formState.errors.postal_code?.message}>
-              <Input className="rounded-none" {...form.register("postal_code")} />
-            </Field>
           </div>
+          <RegionSelects />
           <Field
             label="Alamat Lengkap"
             className="mt-4"
@@ -217,7 +205,8 @@ function AlamatPage() {
               Batal
             </Button>
           </div>
-        </form>
+          </FormProvider>
+         </form>
       )}
     </AccountLayout>
   );
