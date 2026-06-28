@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/auth/")({
+export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Masuk atau Daftar — ZEAN TENAN" },
