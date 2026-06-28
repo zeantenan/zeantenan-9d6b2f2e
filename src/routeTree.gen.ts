@@ -15,8 +15,10 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdukIndexRouteImport } from './routes/produk.index'
+import { Route as AuthIndexRouteImport } from './routes/auth/index'
 import { Route as ProdukSlugRouteImport } from './routes/produk.$slug'
 import { Route as KategoriSlugRouteImport } from './routes/kategori.$slug'
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AuthenticatedWishlistRouteImport } from './routes/_authenticated/wishlist'
 import { Route as AuthenticatedKeranjangRouteImport } from './routes/_authenticated/keranjang'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
@@ -62,6 +64,11 @@ const ProdukIndexRoute = ProdukIndexRouteImport.update({
   path: '/produk/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthRoute,
+} as any)
 const ProdukSlugRoute = ProdukSlugRouteImport.update({
   id: '/produk/$slug',
   path: '/produk/$slug',
@@ -71,6 +78,11 @@ const KategoriSlugRoute = KategoriSlugRouteImport.update({
   id: '/kategori/$slug',
   path: '/kategori/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthenticatedWishlistRoute = AuthenticatedWishlistRouteImport.update({
   id: '/wishlist',
@@ -157,15 +169,17 @@ const AuthenticatedAdminProdukSlugEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/cari': typeof CariRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/keranjang': typeof AuthenticatedKeranjangRoute
   '/wishlist': typeof AuthenticatedWishlistRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/kategori/$slug': typeof KategoriSlugRoute
   '/produk/$slug': typeof ProdukSlugRoute
+  '/auth/': typeof AuthIndexRoute
   '/produk/': typeof ProdukIndexRoute
   '/akun/alamat': typeof AuthenticatedAkunAlamatRoute
   '/akun/password': typeof AuthenticatedAkunPasswordRoute
@@ -181,14 +195,15 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
   '/cari': typeof CariRoute
   '/reset-password': typeof ResetPasswordRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/keranjang': typeof AuthenticatedKeranjangRoute
   '/wishlist': typeof AuthenticatedWishlistRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/kategori/$slug': typeof KategoriSlugRoute
   '/produk/$slug': typeof ProdukSlugRoute
+  '/auth': typeof AuthIndexRoute
   '/produk': typeof ProdukIndexRoute
   '/akun/alamat': typeof AuthenticatedAkunAlamatRoute
   '/akun/password': typeof AuthenticatedAkunPasswordRoute
@@ -206,15 +221,17 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/cari': typeof CariRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/keranjang': typeof AuthenticatedKeranjangRoute
   '/_authenticated/wishlist': typeof AuthenticatedWishlistRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/kategori/$slug': typeof KategoriSlugRoute
   '/produk/$slug': typeof ProdukSlugRoute
+  '/auth/': typeof AuthIndexRoute
   '/produk/': typeof ProdukIndexRoute
   '/_authenticated/akun/alamat': typeof AuthenticatedAkunAlamatRoute
   '/_authenticated/akun/password': typeof AuthenticatedAkunPasswordRoute
@@ -239,8 +256,10 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/keranjang'
     | '/wishlist'
+    | '/auth/callback'
     | '/kategori/$slug'
     | '/produk/$slug'
+    | '/auth/'
     | '/produk/'
     | '/akun/alamat'
     | '/akun/password'
@@ -256,14 +275,15 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/auth'
     | '/cari'
     | '/reset-password'
     | '/checkout'
     | '/keranjang'
     | '/wishlist'
+    | '/auth/callback'
     | '/kategori/$slug'
     | '/produk/$slug'
+    | '/auth'
     | '/produk'
     | '/akun/alamat'
     | '/akun/password'
@@ -287,8 +307,10 @@ export interface FileRouteTypes {
     | '/_authenticated/checkout'
     | '/_authenticated/keranjang'
     | '/_authenticated/wishlist'
+    | '/auth/callback'
     | '/kategori/$slug'
     | '/produk/$slug'
+    | '/auth/'
     | '/produk/'
     | '/_authenticated/akun/alamat'
     | '/_authenticated/akun/password'
@@ -306,7 +328,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   CariRoute: typeof CariRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   KategoriSlugRoute: typeof KategoriSlugRoute
@@ -358,6 +380,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdukIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/': {
+      id: '/auth/'
+      path: '/'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/produk/$slug': {
       id: '/produk/$slug'
       path: '/produk/$slug'
@@ -371,6 +400,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/kategori/$slug'
       preLoaderRoute: typeof KategoriSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_authenticated/wishlist': {
       id: '/_authenticated/wishlist'
@@ -532,10 +568,22 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthIndexRoute: typeof AuthIndexRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+  AuthIndexRoute: AuthIndexRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   CariRoute: CariRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   KategoriSlugRoute: KategoriSlugRoute,
