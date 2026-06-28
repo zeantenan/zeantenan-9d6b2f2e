@@ -1,13 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import { AccountLayout } from "@/components/layout/AccountLayout";
 import { getProfile } from "@/lib/account.functions";
 import { listOrders } from "@/lib/orders.functions";
 import { formatIDR, formatDateID, ORDER_STATUS_LABEL } from "@/lib/format";
 import type { OrderListItem, Profile } from "@/lib/types";
-
-const pQO = queryOptions({ queryKey: ["profile"], queryFn: () => getProfile() });
-const oQO = queryOptions({ queryKey: ["orders"], queryFn: () => listOrders() });
 
 export const Route = createFileRoute("/_authenticated/akun/")({
   head: () => ({
@@ -24,8 +21,12 @@ export const Route = createFileRoute("/_authenticated/akun/")({
 });
 
 function AkunPage() {
-  const { data: profile } = useSuspenseQuery(pQO);
-  const { data: orders } = useSuspenseQuery(oQO);
+  const [{ data: profile }, { data: orders }] = useSuspenseQueries({
+    queries: [
+      { queryKey: ["profile"], queryFn: () => getProfile() },
+      { queryKey: ["orders"], queryFn: () => listOrders() },
+    ],
+  });
   const recent = (orders as OrderListItem[]).slice(0, 4);
 
   return (
