@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
@@ -95,15 +95,9 @@ function RegionSelector({
         align="start"
       >
         <Command>
-          <CommandInput
-            placeholder={searchPlaceholder}
-            value={search}
-            onValueChange={setSearch}
-          />
+          <CommandInput placeholder={searchPlaceholder} value={search} onValueChange={setSearch} />
           <CommandList>
-            <CommandEmpty>
-              {search ? "Tidak ditemukan" : "Ketik untuk mencari"}
-            </CommandEmpty>
+            <CommandEmpty>{search ? "Tidak ditemukan" : "Ketik untuk mencari"}</CommandEmpty>
             <CommandGroup>
               {filtered.map((item) => (
                 <CommandItem
@@ -185,27 +179,32 @@ export function RegionSelects({
     staleTime: 86400000,
   });
 
-  const initialized = useRef(false);
+  function matchName(items: RegionItem[] | undefined, name: string): string {
+    if (!items || !name) return "";
+    const found = items.find((i) => i.name.toLowerCase() === name.toLowerCase());
+    return found?.id ?? "";
+  }
 
   useEffect(() => {
-    if (initialized.current || !provs.data || !province) return;
-    const match = provs.data.find((p) => p.name.toLowerCase() === province.toLowerCase());
-    if (match) {
-      setProvinceId(match.id);
-      initialized.current = true;
+    const id = matchName(provs.data, province);
+    setProvinceId(id);
+    if (!id) {
+      setCityId("");
+      setDistrictId("");
     }
   }, [provs.data, province]);
 
   useEffect(() => {
-    if (!cities.data || !city) return;
-    const match = cities.data.find((c) => c.name.toLowerCase() === city.toLowerCase());
-    if (match) setCityId(match.id);
+    const id = matchName(cities.data, city);
+    setCityId(id);
+    if (!id) {
+      setDistrictId("");
+    }
   }, [cities.data, city]);
 
   useEffect(() => {
-    if (!districtsQ.data || !district) return;
-    const match = districtsQ.data.find((d) => d.name.toLowerCase() === district.toLowerCase());
-    if (match) setDistrictId(match.id);
+    const id = matchName(districtsQ.data, district);
+    setDistrictId(id);
   }, [districtsQ.data, district]);
 
   const handleProvinceChange = useCallback(

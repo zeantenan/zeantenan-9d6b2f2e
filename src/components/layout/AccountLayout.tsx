@@ -1,10 +1,19 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, User, MapPin, Package, Heart, KeyRound, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  User,
+  MapPin,
+  Package,
+  Heart,
+  KeyRound,
+  ShieldCheck,
+  LogOut,
+} from "lucide-react";
 import { type ReactNode } from "react";
 import { PublicLayout } from "./PublicLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 
 const ITEMS = [
   { to: "/akun", label: "Dasbor", icon: LayoutDashboard, exact: true },
@@ -28,6 +37,19 @@ export function AccountLayout({
   const navigate = useNavigate();
   const qc = useQueryClient();
 
+  const { data: isStaff } = useQuery({
+    queryKey: ["isStaff"],
+    queryFn: async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return false;
+      const { data } = await supabase.rpc("is_staff", { _user_id: user.id });
+      return !!data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
   async function handleLogout() {
     await qc.cancelQueries();
     qc.clear();
@@ -49,6 +71,21 @@ export function AccountLayout({
         <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
           <aside>
             <nav className="space-y-0.5">
+              {isStaff && (
+                <>
+                  <div className="my-2 border-t border-border" />
+                  <Link
+                    to="/admin"
+                    className={`flex items-center gap-3 border-l-2 px-3 py-2 text-sm transition-colors ${
+                      pathname.startsWith("/admin")
+                        ? "border-primary bg-secondary text-foreground"
+                        : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
+                    }`}
+                  >
+                    <ShieldCheck className="h-4 w-4" /> Panel Admin
+                  </Link>
+                </>
+              )}
               {ITEMS.map((i) => {
                 const active = i.exact ? pathname === i.to : pathname.startsWith(i.to);
                 return (

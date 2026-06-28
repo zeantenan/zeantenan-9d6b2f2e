@@ -164,49 +164,49 @@ function AlamatPage() {
           className="mt-10 border border-border p-6"
         >
           <FormProvider {...form}>
-          <h3 className="font-display text-lg">{editing ? "Ubah Alamat" : "Alamat Baru"}</h3>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <Field label="Label (mis. Rumah, Kantor)">
-              <Input className="rounded-none" {...form.register("label")} />
-            </Field>
-            <Field label="Nama Penerima" error={form.formState.errors.recipient_name?.message}>
-              <Input className="rounded-none" {...form.register("recipient_name")} />
-            </Field>
-            <Field label="No. Telepon" error={form.formState.errors.phone?.message}>
-              <Input className="rounded-none" {...form.register("phone")} />
-            </Field>
-          </div>
-          <RegionSelects />
-          <Field
-            label="Alamat Lengkap"
-            className="mt-4"
-            error={form.formState.errors.full_address?.message}
-          >
-            <Textarea rows={3} className="rounded-none" {...form.register("full_address")} />
-          </Field>
-          <label className="mt-4 flex items-center gap-2 text-sm">
-            <Checkbox
-              checked={form.watch("is_default") ?? false}
-              onCheckedChange={(v) => form.setValue("is_default", Boolean(v))}
-              className="rounded-none"
-            />
-            <span className="text-muted-foreground">Jadikan alamat utama</span>
-          </label>
-          <div className="mt-6 flex gap-2">
-            <Button type="submit" disabled={m.isPending} className="rounded-none">
-              Simpan
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowForm(false)}
-              className="rounded-none"
+            <h3 className="font-display text-lg">{editing ? "Ubah Alamat" : "Alamat Baru"}</h3>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <Field label="Label (mis. Rumah, Kantor)">
+                <Input className="rounded-none" {...form.register("label")} />
+              </Field>
+              <Field label="Nama Penerima" error={form.formState.errors.recipient_name?.message}>
+                <Input className="rounded-none" {...form.register("recipient_name")} />
+              </Field>
+              <Field label="No. Telepon" error={form.formState.errors.phone?.message}>
+                <Input className="rounded-none" {...form.register("phone")} />
+              </Field>
+            </div>
+            <RegionSelects />
+            <Field
+              label="Alamat Lengkap"
+              className="mt-4"
+              error={form.formState.errors.full_address?.message}
             >
-              Batal
-            </Button>
-          </div>
+              <Textarea rows={3} className="rounded-none" {...form.register("full_address")} />
+            </Field>
+            <label className="mt-4 flex items-center gap-2 text-sm">
+              <Checkbox
+                checked={form.watch("is_default") ?? false}
+                onCheckedChange={(v) => form.setValue("is_default", Boolean(v))}
+                className="rounded-none"
+              />
+              <span className="text-muted-foreground">Jadikan alamat utama</span>
+            </label>
+            <div className="mt-6 flex gap-2">
+              <Button type="submit" disabled={m.isPending} className="rounded-none">
+                Simpan
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowForm(false)}
+                className="rounded-none"
+              >
+                Batal
+              </Button>
+            </div>
           </FormProvider>
-         </form>
+        </form>
       )}
     </AccountLayout>
   );

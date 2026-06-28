@@ -176,158 +176,162 @@ function CheckoutPage() {
     <AccountLayout title="Checkout" description="Lengkapi alamat pengiriman dan pilih kurir Anda.">
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-10 lg:grid-cols-[1fr_340px]">
         <FormProvider {...form}>
-        <div className="space-y-10">
-          {addresses.length > 0 && (
+          <div className="space-y-10">
+            {addresses.length > 0 && (
+              <section>
+                <h3 className="font-display text-lg">Pilih dari Alamat Tersimpan</h3>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {(addresses as Address[]).map((a) => (
+                    <button
+                      key={a.id}
+                      type="button"
+                      onClick={() => pickAddress(a.id)}
+                      className={`border p-4 text-left text-xs ${usingAddrId === a.id ? "border-primary" : "border-border hover:border-foreground"}`}
+                    >
+                      <p className="text-sm font-medium text-foreground">
+                        {a.recipient_name} · {a.phone}
+                      </p>
+                      <p className="mt-1 text-muted-foreground">
+                        {a.full_address}, {a.district}, {a.city}, {a.province} {a.postal_code}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+
             <section>
-              <h3 className="font-display text-lg">Pilih dari Alamat Tersimpan</h3>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {(addresses as Address[]).map((a) => (
-                  <button
-                    key={a.id}
-                    type="button"
-                    onClick={() => pickAddress(a.id)}
-                    className={`border p-4 text-left text-xs ${usingAddrId === a.id ? "border-primary" : "border-border hover:border-foreground"}`}
-                  >
-                    <p className="text-sm font-medium text-foreground">
-                      {a.recipient_name} · {a.phone}
-                    </p>
-                    <p className="mt-1 text-muted-foreground">
-                      {a.full_address}, {a.district}, {a.city}, {a.province} {a.postal_code}
-                    </p>
-                  </button>
-                ))}
+              <h3 className="font-display text-lg">Informasi Penerima</h3>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <Field label="Nama Penerima" error={form.formState.errors.recipient_name?.message}>
+                  <Input className="rounded-none" {...form.register("recipient_name")} />
+                </Field>
+                <Field label="No. Telepon" error={form.formState.errors.recipient_phone?.message}>
+                  <Input className="rounded-none" {...form.register("recipient_phone")} />
+                </Field>
+                <div className="sm:col-span-2">
+                  <RegionSelects />
+                </div>
               </div>
-            </section>
-          )}
-
-          <section>
-            <h3 className="font-display text-lg">Informasi Penerima</h3>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Field label="Nama Penerima" error={form.formState.errors.recipient_name?.message}>
-                <Input className="rounded-none" {...form.register("recipient_name")} />
-              </Field>
-              <Field label="No. Telepon" error={form.formState.errors.recipient_phone?.message}>
-                <Input className="rounded-none" {...form.register("recipient_phone")} />
-              </Field>
-              <div className="sm:col-span-2">
-                <RegionSelects />
-              </div>
-            </div>
-            <Field
-              label="Alamat Lengkap"
-              className="mt-4"
-              error={form.formState.errors.full_address?.message}
-            >
-              <Textarea rows={3} className="rounded-none" {...form.register("full_address")} />
-            </Field>
-          </section>
-
-          <section>
-            <h3 className="font-display text-lg">Pengiriman</h3>
-            <Field label="Kurir & Layanan" className="mt-4">
-              <Select value={courierCombo} onValueChange={(v) => form.setValue("courier_combo", v)}>
-                <SelectTrigger className="rounded-none">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {COURIERS.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>
-                      {c.label} — {formatIDR(c.cost)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </section>
-
-          <section>
-            <h3 className="font-display text-lg">Pembayaran</h3>
-            <Field label="Transfer Bank" className="mt-4">
-              <Select
-                value={form.watch("bank_name")}
-                onValueChange={(v) => form.setValue("bank_name", v)}
+              <Field
+                label="Alamat Lengkap"
+                className="mt-4"
+                error={form.formState.errors.full_address?.message}
               >
-                <SelectTrigger className="rounded-none">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {BANKS.map((b) => (
-                    <SelectItem key={b.value} value={b.value}>
-                      {b.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Setelah pesanan dibuat Anda akan diarahkan ke halaman pembayaran untuk mengunggah
-              bukti transfer.
-            </p>
-          </section>
+                <Textarea rows={3} className="rounded-none" {...form.register("full_address")} />
+              </Field>
+            </section>
 
-          <section>
-            <h3 className="font-display text-lg">Catatan</h3>
-            <Textarea
-              rows={3}
-              className="mt-2 rounded-none"
-              placeholder="Catatan opsional untuk penjual…"
-              {...form.register("notes")}
-            />
-          </section>
+            <section>
+              <h3 className="font-display text-lg">Pengiriman</h3>
+              <Field label="Kurir & Layanan" className="mt-4">
+                <Select
+                  value={courierCombo}
+                  onValueChange={(v) => form.setValue("courier_combo", v)}
+                >
+                  <SelectTrigger className="rounded-none">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COURIERS.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>
+                        {c.label} — {formatIDR(c.cost)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </section>
 
-          <label className="flex items-start gap-3 text-sm">
-            <Checkbox
-              checked={form.watch("agreed")}
-              onCheckedChange={(v) => form.setValue("agreed", Boolean(v))}
-              className="mt-0.5 rounded-none"
-            />
-            <span className="text-muted-foreground">
-              Saya menyetujui syarat &amp; ketentuan pemesanan ZEAN TENAN dan kebijakan pengiriman.
-            </span>
-          </label>
-          {form.formState.errors.agreed && (
-            <p className="text-xs text-destructive">{form.formState.errors.agreed.message}</p>
-          )}
-        </div>
+            <section>
+              <h3 className="font-display text-lg">Pembayaran</h3>
+              <Field label="Transfer Bank" className="mt-4">
+                <Select
+                  value={form.watch("bank_name")}
+                  onValueChange={(v) => form.setValue("bank_name", v)}
+                >
+                  <SelectTrigger className="rounded-none">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BANKS.map((b) => (
+                      <SelectItem key={b.value} value={b.value}>
+                        {b.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Setelah pesanan dibuat Anda akan diarahkan ke halaman pembayaran untuk mengunggah
+                bukti transfer.
+              </p>
+            </section>
 
-        <aside className="h-fit border border-border p-6">
-          <h3 className="font-display text-xl text-foreground">Ringkasan</h3>
-          <ul className="mt-4 space-y-3 text-sm">
-            {items.map((it) => {
-              const price = Number(
-                it.product_variants?.price_override ??
-                  it.products?.discount_price ??
-                  it.products?.price ??
-                  0,
-              );
-              return (
-                <li key={it.id} className="flex justify-between gap-3">
-                  <span className="flex-1 text-muted-foreground">
-                    {it.products?.name} × {it.quantity}
-                  </span>
-                  <span className="text-foreground">{formatIDR(price * it.quantity)}</span>
-                </li>
-              );
-            })}
-          </ul>
-          <dl className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Subtotal</dt>
-              <dd>{formatIDR(subtotal)}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Ongkir</dt>
-              <dd>{formatIDR(shipping)}</dd>
-            </div>
-            <div className="flex justify-between border-t border-border pt-2 text-base">
-              <dt>Total</dt>
-              <dd className="font-medium text-foreground">{formatIDR(total)}</dd>
-            </div>
-          </dl>
-          <Button type="submit" disabled={m.isPending} className="mt-6 w-full rounded-none">
-            Buat Pesanan
-          </Button>
-        </aside>
+            <section>
+              <h3 className="font-display text-lg">Catatan</h3>
+              <Textarea
+                rows={3}
+                className="mt-2 rounded-none"
+                placeholder="Catatan opsional untuk penjual…"
+                {...form.register("notes")}
+              />
+            </section>
+
+            <label className="flex items-start gap-3 text-sm">
+              <Checkbox
+                checked={form.watch("agreed")}
+                onCheckedChange={(v) => form.setValue("agreed", Boolean(v))}
+                className="mt-0.5 rounded-none"
+              />
+              <span className="text-muted-foreground">
+                Saya menyetujui syarat &amp; ketentuan pemesanan ZEAN TENAN dan kebijakan
+                pengiriman.
+              </span>
+            </label>
+            {form.formState.errors.agreed && (
+              <p className="text-xs text-destructive">{form.formState.errors.agreed.message}</p>
+            )}
+          </div>
+
+          <aside className="h-fit border border-border p-6">
+            <h3 className="font-display text-xl text-foreground">Ringkasan</h3>
+            <ul className="mt-4 space-y-3 text-sm">
+              {items.map((it) => {
+                const price = Number(
+                  it.product_variants?.price_override ??
+                    it.products?.discount_price ??
+                    it.products?.price ??
+                    0,
+                );
+                return (
+                  <li key={it.id} className="flex justify-between gap-3">
+                    <span className="flex-1 text-muted-foreground">
+                      {it.products?.name} × {it.quantity}
+                    </span>
+                    <span className="text-foreground">{formatIDR(price * it.quantity)}</span>
+                  </li>
+                );
+              })}
+            </ul>
+            <dl className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Subtotal</dt>
+                <dd>{formatIDR(subtotal)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Ongkir</dt>
+                <dd>{formatIDR(shipping)}</dd>
+              </div>
+              <div className="flex justify-between border-t border-border pt-2 text-base">
+                <dt>Total</dt>
+                <dd className="font-medium text-foreground">{formatIDR(total)}</dd>
+              </div>
+            </dl>
+            <Button type="submit" disabled={m.isPending} className="mt-6 w-full rounded-none">
+              Buat Pesanan
+            </Button>
+          </aside>
         </FormProvider>
       </form>
     </AccountLayout>
