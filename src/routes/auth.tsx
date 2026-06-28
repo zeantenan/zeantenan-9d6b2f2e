@@ -15,12 +15,12 @@ declare global {
   interface Window {
     google?: {
       accounts: {
-        oauth2: {
-          initTokenClient: (config: {
+        id: {
+          initialize: (config: {
             client_id: string;
-            scope: string;
-            callback: (response: { error?: string; access_token?: string }) => void;
-          }) => { requestAccessToken: () => void };
+            callback: (response: { credential?: string; error?: string }) => void;
+          }) => void;
+          prompt: (momentListener?: () => void) => void;
         };
       };
     };

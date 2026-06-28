@@ -42,6 +42,64 @@ function parseResponse(text: string): { short_description: string; description: 
   };
 }
 
+async function callOpenAI(prompt: string, imageUrls: string[]): Promise<string> {
+  const validImages = imageUrls.filter((u) => u.startsWith("http"));
+
+  const body: Record<string, unknown> = {
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      {
+        role: "user",
+        content: [
+          { type: "text", text: prompt },
+          ...validImages.slice(0, 2).map((url) => ({
+            type: "image_url" as const,
+            image_url: { url },
+          })),
+        ],
+      },
+    ],
+    max_tokens: 1000,
+    temperature: 0.7,
+  };
+
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    if (errText.includes("does not support image input") && validImages.length > 0) {
+      const res2 = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({ ...body, messages: [{ role: "system", content: SYSTEM_PROMPT }, { role: "user", content: prompt }] }),
+      });
+      if (!res2.ok) {
+        const err2 = await res2.text();
+        console.error("OpenAI error (retry):", err2);
+        return "";
+      }
+      const json2 = await res2.json();
+      return json2.choices?.[0]?.message?.content ?? "";
+    }
+    console.error("OpenAI error:", errText);
+    return "";
+  }
+
+  const json = await res.json();
+  return json.choices?.[0]?.message?.content ?? "";
+}
+
 export const generateProductDescription = createServerFn({ method: "POST" })
   .validator(
     (d: { name: string; slug: string; categoryName?: string | null; imageUrls?: string[] }) => {
@@ -61,40 +119,9 @@ export const generateProductDescription = createServerFn({ method: "POST" })
       data.imageUrls ?? [],
     );
 
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          {
-            role: "user",
-            content: [
-              { type: "text", text: prompt },
-              ...(data.imageUrls ?? []).slice(0, 2).map((url) => ({
-                type: "image_url" as const,
-                image_url: { url },
-              })),
-            ],
-          },
-        ],
-        max_tokens: 1000,
-        temperature: 0.7,
-      }),
-    });
+    const text = await callOpenAI(prompt, data.imageUrls ?? []);
+    if (!text) return generateFallback(data.name, data.categoryName ?? null);
 
-    if (!res.ok) {
-      const err = await res.text();
-      console.error("OpenAI error:", err);
-      return generateFallback(data.name, data.categoryName ?? null);
-    }
-
-    const json = await res.json();
-    const text = json.choices?.[0]?.message?.content ?? "";
     return parseResponse(text);
   });
 
