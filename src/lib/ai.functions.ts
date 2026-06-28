@@ -82,7 +82,13 @@ async function callOpenAI(prompt: string, imageUrls: string[]): Promise<string> 
           "Content-Type": "application/json",
           Authorization: `Bearer ${OPENAI_API_KEY}`,
         },
-        body: JSON.stringify({ ...body, messages: [{ role: "system", content: SYSTEM_PROMPT }, { role: "user", content: prompt }] }),
+        body: JSON.stringify({
+          ...body,
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: prompt },
+          ],
+        }),
       });
       if (!res2.ok) {
         const err2 = await res2.text();
