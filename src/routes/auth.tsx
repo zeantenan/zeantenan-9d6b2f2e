@@ -157,7 +157,10 @@ function AuthPage() {
             toast.error("Tidak mendapatkan token dari Google");
             return;
           }
-          const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token });
+          const { error } = await supabase.auth.signInWithIdToken({
+            provider: "google",
+            token,
+          });
           setLoading(false);
           if (error) return toast.error("Gagal verifikasi akun", { description: error.message });
           navigate({ to: "/akun" });
