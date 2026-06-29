@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,6 +10,28 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { supabase } from "@/integrations/supabase/client";
+
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: {
+            client_id: string;
+            callback: (response: { credential?: string; error?: string }) => void;
+            auto_select?: boolean;
+            cancel_on_tap_outside?: boolean;
+          }) => void;
+          prompt: (momentListener?: () => void) => void;
+          cancel: () => void;
+        };
+      };
+    };
+  }
+}
+
+const GOOGLE_CLIENT_ID =
+  "1016487992569-j3q50d8fklerq75tan9s11btdtbna69o.apps.googleusercontent.com";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -48,11 +70,54 @@ function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
   const [loading, setLoading] = useState(false);
+  const gInitialized = useRef(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/akun" });
     });
+  }, [navigate]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    async function onCredential(res: { credential?: string; error?: string }) {
+      setLoading(false);
+      if (res.error) {
+        toast.error("Gagal masuk dengan Google", { description: res.error });
+        return;
+      }
+      const token = res.credential;
+      if (!token) {
+        toast.error("Tidak mendapatkan token dari Google");
+        return;
+      }
+      const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token });
+      if (error) {
+        toast.error("Gagal verifikasi akun", { description: error.message });
+        return;
+      }
+      navigate({ to: "/akun" });
+    }
+    function init() {
+      if (gInitialized.current || !window.google?.accounts?.id) return;
+      gInitialized.current = true;
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: onCredential,
+        auto_select: false,
+        cancel_on_tap_outside: false,
+      });
+    }
+    if (window.google?.accounts) {
+      init();
+      return;
+    }
+    const s = document.createElement("script");
+    s.src = "https://accounts.google.com/gsi/client";
+    s.async = true;
+    s.defer = true;
+    s.onload = init;
+    document.body.appendChild(s);
   }, [navigate]);
 
   const loginForm = useForm({
@@ -104,21 +169,20 @@ function AuthPage() {
     setMode("login");
   }
 
-  async function onGoogle() {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) {
-      setLoading(false);
-      toast.error(error.message, {
-        description:
-          "Gagal masuk dengan Google. Pastikan provider Google sudah diaktifkan di Supabase Dashboard.",
+  function onGoogle() {
+    if (loading) return;
+    if (!window.google?.accounts?.id || !gInitialized.current) {
+      toast.error("Google Sign-In tidak tersedia", {
+        description: "Muat ulang halaman atau coba metode lain.",
       });
+      return;
     }
+    setLoading(true);
+    window.google.accounts.id.prompt();
+    setTimeout(() => {
+      setLoading(false);
+      window.google?.accounts?.id?.cancel?.();
+    }, 60000);
   }
 
   return (
