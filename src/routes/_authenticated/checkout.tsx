@@ -329,7 +329,7 @@ function CheckoutPage() {
               </div>
             </dl>
             <Button type="submit" disabled={m.isPending} className="mt-6 w-full rounded-none">
-              Buat Pesanan
+              {m.isPending ? "Memproses pesanan..." : "Buat Pesanan"}
             </Button>
           </aside>
         </FormProvider>

@@ -93,6 +93,7 @@ function AuthPage() {
       }
       const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token });
       if (error) {
+        console.error("[Google Auth] signInWithIdToken error:", error.message);
         toast.error("Gagal verifikasi akun", { description: error.message });
         return;
       }

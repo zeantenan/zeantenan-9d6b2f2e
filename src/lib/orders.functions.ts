@@ -86,16 +86,13 @@ export const placeOrder = createServerFn({ method: "POST" })
       };
     });
 
-    const discount = 0; // voucher Phase 2
+    const discount = 0;
     const total = subtotal + data.shipping_cost - discount;
 
-    // Generate order number
-    const { data: numRow, error: numErr } = await supabase.rpc("generate_order_number");
-    if (numErr) throw new Error(numErr.message);
-    const orderNumber = numRow as unknown as string;
+    const now = new Date();
+    const orderNumber = `ZTN-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${Math.random().toString(36).substring(2, 8).toUpperCase().padStart(6, "0")}`;
 
-    const deadline = new Date();
-    deadline.setHours(deadline.getHours() + 24);
+    const deadline = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
     const { data: order, error: ordErr } = await supabase
       .from("orders")
@@ -131,16 +128,16 @@ export const placeOrder = createServerFn({ method: "POST" })
       .insert(orderItems.map((i) => ({ ...i, order_id: order.id })));
     if (oiErr) throw new Error(oiErr.message);
 
-    await supabase.from("order_status_history").insert({
-      order_id: order.id,
-      status: "menunggu_pembayaran",
-      notes: "Pesanan dibuat, menunggu pembayaran.",
-      changed_by: userId,
-    });
-
-    // Clear cart
-    await supabase.from("cart_items").delete().eq("cart_id", cart.id);
-    await supabase.from("carts").update({ voucher_code: null, notes: null }).eq("id", cart.id);
+    await Promise.all([
+      supabase.from("order_status_history").insert({
+        order_id: order.id,
+        status: "menunggu_pembayaran",
+        notes: "Pesanan dibuat, menunggu pembayaran.",
+        changed_by: userId,
+      }),
+      supabase.from("cart_items").delete().eq("cart_id", cart.id),
+      supabase.from("carts").update({ voucher_code: null, notes: null }).eq("id", cart.id),
+    ]);
 
     return { order_number: order.order_number };
   });
